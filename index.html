@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Script contenant l'algorithme kNN -->
+    <script src="KNN.js"></script>
+    <!-- Script contenant ce qui permet les intéractions entre l'utilisateur et le programme + css  -->
+    <script src="Controller.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    
+    <title>Meilleur k pour l'algorithme k-NN</title>
+  
+</head>
+
+<body class="bg-info py-5">
+    
+    <script>
+        let program = new controller()
+        
+    </script>
+  <!-- mise en page avec l'utilisation de Bootstrap-->
+  <div class = "col-md-6 offset-md-3">
+    <div class = "card">
+        <div class = "card-body">
+            <h1>Meilleur k pour l'algorithme k-NN</h1>
+              
+                <div class="form-row">
+                  <div class="col">
+                    <div>
+                      <input type="file" class="inputfile" id="uploadfile1" onchange="program.getDataSet(this, program.dataSet)"> 
+                      <label id="labelSet"  for="uploadfile1">Choisissez le fichier du dataSet</label>
+                    </div>
+                    <div>
+                      <input type="file" class="inputfile" id="uploadfile2" onchange="program.getDataSet(this, program.dataTest)">
+                      <label id="labelTest" for="uploadfile2">Choisissez le fichier de set d'entraînement</label>
+                    </div>
+                    
+                    <button type="input"  class="btn btn-warning" onclick="program.start()" >Calcul</button>
+                  </div>
+                </div>
+              
+            
+        </div>
+        <div class="card-body" id="interface">
+          <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus approprié pour un certain dataset. 
+            Vous aurez besoin d'un set contenant les données et d'un set d'entraînement qui prend certains éléments du dataset afin de voir si l'algorithme
+            est capable de trouver la bonne catégorie.
+          </p>
+        </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

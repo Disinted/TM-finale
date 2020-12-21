@@ -1,0 +1,12 @@
+.inputfile {
+	display: none;
+}
+
+.inputfile + label {
+	border-style: solid;
+	border-width: 2px;
+	border-color: cornflowerblue;
+	background-color: whitesmoke;
+	border-radius: 5px;
+	
+}
