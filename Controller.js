@@ -12,16 +12,10 @@ class controller{
         };
 
         this.dataSet = {
-
-            dataFile:[],
-            data : undefined,
             dataArray : [],
         };
 
         this.dataTest = {
-
-            dataFile :[],
-            data : undefined,
             dataArray : [],
         };
 
@@ -29,9 +23,7 @@ class controller{
     /*getDataSet(csv input, str dataType) --> none
     enregistre dans des objets globaux les données sous forme d'array d'array ( [[data1], [data2]])*/
     getDataSet(input, dataType) {
-        //permet de réinitialiser les valeurs des arrays si l'utilisateur charge plusieurs fois le fichier
-        dataType.dataFile = [];
-        dataType.data = undefined;
+        //permet de réinitialiser la valeur de l'array si l'utilisateur charge plusieurs fois le fichier
         dataType.dataArray = [];
         //récupération des csv
         if (input.files && input.files[0]) {
@@ -40,12 +32,12 @@ class controller{
             reader.readAsBinaryString(input.files[0]);
             reader.onload = function (e) {
                 
-                dataType.dataFile = e.target.result;  
-                dataType.data = dataType.dataFile.split("\n");
+                let dataFile = e.target.result;  
+                let data = dataFile.split("\n");
 
-                for ( let x = 0; x < dataType.data.length; x++){
+                for ( let x = 0; x < data.length; x++){
 
-                    dataType.dataArray.push(dataType.data[x].split(","));
+                    dataType.dataArray.push(data[x].split(","));
 
                 };
              };
@@ -53,14 +45,11 @@ class controller{
         //Confirmation du chargement du dataset / set d'entraînement
         if ( dataType == this.dataSet){
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
-        }
-        else {
-            document.getElementById("labelTest").innerHTML = "Set d'entraînement chargé !";
         };
     }; 
 
     /*getClasses(arr dataArray) --> none
-    trouve les différents classe du dataset automatiquement et les mets dans une variable golbale sous forme d'array*/
+    trouve les différents classe du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
     getClasses(dataArray){
         
         
@@ -238,11 +227,13 @@ class controller{
         this.algorithm.success = [];
         this.algorithm.percentages = [];
     };
+
+    
     /*start() --> None
     corps princpal du programme*/ 
     start(){
         this.reset();
-        if ( this.dataSet.dataArray.length == 0 || this.dataTest.dataArray.length == 0){
+        if ( this.dataSet.dataArray.length == 0 ){
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger au moins une des données.";
         }
         else {
