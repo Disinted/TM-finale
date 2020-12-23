@@ -5,23 +5,17 @@ class controller{
         this.classes = [];
 
         this.algorithm = {
-
+            iterationDataTest : undefined,
             kMax : undefined ,
             success:[],
             percentages :[],
         };
 
         this.dataSet = {
-
-            dataFile:[],
-            data : undefined,
             dataArray : [],
         };
 
         this.dataTest = {
-
-            dataFile :[],
-            data : undefined,
             dataArray : [],
         };
 
@@ -29,9 +23,7 @@ class controller{
     /*getDataSet(csv input, str dataType) --> none
     enregistre dans des objets globaux les données sous forme d'array d'array ( [[data1], [data2]])*/
     getDataSet(input, dataType) {
-        //permet de réinitialiser les valeurs des arrays si l'utilisateur charge plusieurs fois le fichier
-        dataType.dataFile = [];
-        dataType.data = undefined;
+        //permet de réinitialiser la valeur de l'array si l'utilisateur charge plusieurs fois le fichier
         dataType.dataArray = [];
         //récupération des csv
         if (input.files && input.files[0]) {
@@ -40,27 +32,50 @@ class controller{
             reader.readAsBinaryString(input.files[0]);
             reader.onload = function (e) {
                 
-                dataType.dataFile = e.target.result;  
-                dataType.data = dataType.dataFile.split("\n");
+                let dataFile = e.target.result;  
+                let data = dataFile.split("\n");
 
-                for ( let x = 0; x < dataType.data.length; x++){
+                for ( let x = 0; x < data.length; x++){
 
-                    dataType.dataArray.push(dataType.data[x].split(","));
+                    dataType.dataArray.push(data[x].split(","));
 
                 };
              };
         };
-        //Confirmation du chargement du dataset / set d'entraînement
+        //Confirmation du chargement du dataset
         if ( dataType == this.dataSet){
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
-        }
-        else {
-            document.getElementById("labelTest").innerHTML = "Set d'entraînement chargé !";
         };
     }; 
 
+    /*getDataTest(array dataArray, array dataTestArray) --> none
+    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
+    
+    getDataTest(dataArray, dataTestArray){
+
+        let arrayTest = dataArray.slice(0,10);
+        for ( let i = 0; i < 10; i++){
+            dataTestArray.push(arrayTest[i]);
+        };
+        console.log(this.dataTest.dataArray);
+        dataArray.splice(0,10);
+    };
+
+    /*arrayShuffle(array dataArray) --> array
+    Mélange les données de l'array ( algorithme mélange de Fisher-Yates )*/
+    arrayShuffle(dataArray){
+            for( let i = dataArray.length - 1; i > 0; i--){
+                let j = Math.floor(Math.random()*(i+1));
+                let actualIndex = dataArray[i];
+                dataArray[i] = dataArray[j];
+                dataArray[j] = actualIndex;
+            }
+        console.log(dataArray)
+        return dataArray;
+    }
+
     /*getClasses(arr dataArray) --> none
-    trouve les différents classe du dataset automatiquement et les mets dans une variable golbale sous forme d'array*/
+    trouve les différents classe du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
     getClasses(dataArray){
         
         
@@ -238,14 +253,18 @@ class controller{
         this.algorithm.success = [];
         this.algorithm.percentages = [];
     };
+
+    
     /*start() --> None
     corps princpal du programme*/ 
     start(){
         this.reset();
-        if ( this.dataSet.dataArray.length == 0 || this.dataTest.dataArray.length == 0){
-            document.getElementById("baseText").innerHTML = "Vous avez oublié de charger au moins une des données.";
+        if ( this.dataSet.dataArray.length == 0 ){
+            document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
+            this.arrayShuffle(this.dataSet.dataArray);
+            this.getDataTest(this.dataSet.dataArray, this.dataTest.dataArray);
             this.getKMax(this.dataSet.dataArray);
             this.getClasses(this.dataSet.dataArray);
             this.getSuccess();
