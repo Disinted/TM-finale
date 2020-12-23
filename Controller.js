@@ -49,23 +49,29 @@ class controller{
     }; 
 
     /*getDataTest(array dataArray, array dataTestArray) --> none
-    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement ( dataTestArray ) */
+    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
+    
     getDataTest(dataArray, dataTestArray){
 
-        dataTestArray 
-        
-    }
+        let arrayTest = dataArray.slice(0,10);
+        for ( let i = 0; i < 10; i++){
+            dataTestArray.push(arrayTest[i]);
+        };
+        console.log(this.dataTest.dataArray);
+        dataArray.splice(0,10);
+    };
 
     /*arrayShuffle(array dataArray) --> array
     Mélange les données de l'array ( algorithme mélange de Fisher-Yates )*/
     arrayShuffle(dataArray){
-        for( let i = dataArray.length - 1; i > 0; i--){
-            let j = Math.floor(Math.random()*(i+1));
-            let actualIndex = dataArray[i];
-            dataArray[i] = dataArray[j];
-            dataArray[j] = actualIndex
-        }
-        return dataArray
+            for( let i = dataArray.length - 1; i > 0; i--){
+                let j = Math.floor(Math.random()*(i+1));
+                let actualIndex = dataArray[i];
+                dataArray[i] = dataArray[j];
+                dataArray[j] = actualIndex;
+            }
+        console.log(dataArray)
+        return dataArray;
     }
 
     /*getClasses(arr dataArray) --> none
@@ -257,6 +263,8 @@ class controller{
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
+            this.arrayShuffle(this.dataSet.dataArray);
+            this.getDataTest(this.dataSet.dataArray, this.dataTest.dataArray);
             this.getKMax(this.dataSet.dataArray);
             this.getClasses(this.dataSet.dataArray);
             this.getSuccess();
