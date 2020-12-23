@@ -5,7 +5,7 @@ class controller{
         this.classes = [];
 
         this.algorithm = {
-
+            iterationDataTest : undefined,
             kMax : undefined ,
             success:[],
             percentages :[],
@@ -42,11 +42,31 @@ class controller{
                 };
              };
         };
-        //Confirmation du chargement du dataset / set d'entraînement
+        //Confirmation du chargement du dataset
         if ( dataType == this.dataSet){
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
         };
     }; 
+
+    /*getDataTest(array dataArray, array dataTestArray) --> none
+    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement ( dataTestArray ) */
+    getDataTest(dataArray, dataTestArray){
+
+        dataTestArray 
+        
+    }
+
+    /*arrayShuffle(array dataArray) --> array
+    Mélange les données de l'array ( algorithme mélange de Fisher-Yates )*/
+    arrayShuffle(dataArray){
+        for( let i = dataArray.length - 1; i > 0; i--){
+            let j = Math.floor(Math.random()*(i+1));
+            let actualIndex = dataArray[i];
+            dataArray[i] = dataArray[j];
+            dataArray[j] = actualIndex
+        }
+        return dataArray
+    }
 
     /*getClasses(arr dataArray) --> none
     trouve les différents classe du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
@@ -234,7 +254,7 @@ class controller{
     start(){
         this.reset();
         if ( this.dataSet.dataArray.length == 0 ){
-            document.getElementById("baseText").innerHTML = "Vous avez oublié de charger au moins une des données.";
+            document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
             this.getKMax(this.dataSet.dataArray);
