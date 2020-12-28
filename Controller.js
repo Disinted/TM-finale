@@ -254,6 +254,11 @@ class controller{
         this.algorithm.percentages = [];
     };
 
+    /*crossvalidation() --> none
+    estimation de la fiabilité du programme*/
+    crossvalidation(){
+        
+    }
     
     /*start() --> None
     corps princpal du programme*/ 
