@@ -5,7 +5,7 @@ class controller{
         this.classes = [];
 
         this.algorithm = {
-            iterationDataTest : undefined,
+            numberElementsDataTest : undefined,
             kMax : undefined ,
             success:[],
             percentages :[],
@@ -51,14 +51,14 @@ class controller{
     /*getDataTest(array dataArray, array dataTestArray) --> none
     Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
     
-    getDataTest(dataArray, dataTestArray){
+    getDataTest(dataArray, dataTestArray, numberPerFold, index ){
 
-        let arrayTest = dataArray.slice(0,10);
-        for ( let i = 0; i < 10; i++){
+        let arrayTest = dataArray.slice(0,numberPerFold);
+        for ( let i = 0; i < numberPerFold; i++){
             dataTestArray.push(arrayTest[i]);
         };
         console.log(this.dataTest.dataArray);
-        dataArray.splice(0,10);
+        dataArray.splice(0,numberPerFold);
     };
 
     /*arrayShuffle(array dataArray) --> array
@@ -254,10 +254,30 @@ class controller{
         this.algorithm.percentages = [];
     };
 
+    /*resetDataSet() --> none
+    remet le dataSet comme il était avant d'être séparé*/
+    resetDataSet(dataSet, dataTest){
+
+    }
+
     /*crossvalidation() --> none
     estimation de la fiabilité du programme*/
-    crossvalidation(){
+    crossvalidation(dataSet, dataTest, numberOfElementsDataTest){
         
+        numberOfElementsDataTest = Math.floor(dataSet.length / 10)
+        if ( dataSet.length % 10 == 0 ){
+           
+           
+        };
+        console.log(numberOfElementsDataTest)
+
+
+        this.getDataTest(dataSet, dataTest, numberOfElementsDataTest);
+        this.getKMax(dataSet);
+        this.getClasses(dataSet);
+        this.getSuccess();
+        this.getPercent();
+        this.resetDataSet(dataSet, dataTest)
     }
     
     /*start() --> None
@@ -269,13 +289,8 @@ class controller{
         }
         else {
             this.arrayShuffle(this.dataSet.dataArray);
-            this.getDataTest(this.dataSet.dataArray, this.dataTest.dataArray);
-            this.getKMax(this.dataSet.dataArray);
-            this.getClasses(this.dataSet.dataArray);
-            this.getSuccess();
-            this.getPercent();
-            this.chartAndTextUpdate();
-            
+            this.crossvalidation(this.dataSet.dataArray, this.dataTest.dataArray, this.algorithm.numberElementsDataTest);
+            this.chartAndTextUpdate();  
         };
             
      };
