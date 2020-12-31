@@ -48,18 +48,6 @@ class controller{
         };
     }; 
 
-    /*getDataTest(array dataArray, array dataTestArray) --> none
-    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
-    
-    getDataTest(dataArray, dataTestArray, numberPerFold, index ){
-
-        let arrayTest = dataArray.slice(0,numberPerFold);
-        for ( let i = 0; i < numberPerFold; i++){
-            dataTestArray.push(arrayTest[i]);
-        };
-        console.log(this.dataTest.dataArray);
-        dataArray.splice(0,numberPerFold);
-    };
 
     /*arrayShuffle(array dataArray) --> array
     Mélange les données de l'array ( algorithme mélange de Fisher-Yates )*/
@@ -186,7 +174,7 @@ class controller{
              arr1.push(nearest.slice(0,k+1)); // [nearest1], [nearest1, nearest2], ...
             
              arr2.push(this.arrayToClass(arr1));// [cluster]
-            console.log(arr1)
+            
             
              if ( arr2[0].trim() ==  this.dataTest.dataArray[i][this.dataTest.dataArray[0].length-1].trim() ){
                 
@@ -254,30 +242,45 @@ class controller{
         this.algorithm.percentages = [];
     };
 
+        /*getDataTest(array dataArray, array dataTestArray) --> none
+    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
+    
+    getDataTest(dataArray, dataTestArray, numberPerFold, index ){
+
+        let arrayTest = dataArray.slice(0,numberPerFold);
+        for ( let i = 0; i < numberPerFold; i++){
+            dataTestArray.push(arrayTest[i]);
+        };
+        console.log(this.dataTest.dataArray);
+        dataArray.splice(0,numberPerFold);
+    };
+
     /*resetDataSet() --> none
     remet le dataSet comme il était avant d'être séparé*/
     resetDataSet(dataSet, dataTest){
-
+        for ( let i = dataTest.length-1; i >= 0; i--){
+            dataSet.splice(0,0,dataTest[i])
+        }
     }
 
     /*crossvalidation() --> none
     estimation de la fiabilité du programme*/
     crossvalidation(dataSet, dataTest, numberOfElementsDataTest){
         
-        numberOfElementsDataTest = Math.floor(dataSet.length / 10)
+        numberOfElementsDataTest = Math.floor(dataSet.length / 10);
         if ( dataSet.length % 10 == 0 ){
            
            
         };
         console.log(numberOfElementsDataTest)
-
+        
 
         this.getDataTest(dataSet, dataTest, numberOfElementsDataTest);
         this.getKMax(dataSet);
         this.getClasses(dataSet);
         this.getSuccess();
         this.getPercent();
-        this.resetDataSet(dataSet, dataTest)
+        //this.resetDataSet(dataSet, dataTest);
     }
     
     /*start() --> None
