@@ -5,7 +5,7 @@ class controller{
         this.classes = [];
 
         this.algorithm = {
-            numberElementsDataTest : undefined,
+            numberDataPerFold : undefined,
             kMax : undefined ,
             success:[],
             percentages :[],
@@ -245,42 +245,51 @@ class controller{
         /*getDataTest(array dataArray, array dataTestArray) --> none
     Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
     
-    getDataTest(dataArray, dataTestArray, numberPerFold, index ){
-
-        let arrayTest = dataArray.slice(0,numberPerFold);
-        for ( let i = 0; i < numberPerFold; i++){
+    getDataTest(dataArray, dataTestArray, numberOfData, index ){
+        console.log(numberOfData)
+        let arrayTest = dataArray.slice(index,numberOfData+index);
+        
+        for ( let i = 0; i < numberOfData; i++){
             dataTestArray.push(arrayTest[i]);
         };
         console.log(this.dataTest.dataArray);
-        dataArray.splice(0,numberPerFold);
+        dataArray.splice(index,numberOfData);
     };
 
     /*resetDataSet() --> none
     remet le dataSet comme il était avant d'être séparé*/
-    resetDataSet(dataSet, dataTest){
+    resetData(dataSet, dataTest, index){
         for ( let i = dataTest.length-1; i >= 0; i--){
-            dataSet.splice(0,0,dataTest[i])
+            dataSet.splice(index,0,dataTest[i])
+            
         }
+        dataTest.splice(0,)
     }
 
     /*crossvalidation() --> none
     estimation de la fiabilité du programme*/
-    crossvalidation(dataSet, dataTest, numberOfElementsDataTest){
+    crossvalidation(dataSet, dataTest, numberDataPerFold){
         
-        numberOfElementsDataTest = Math.floor(dataSet.length / 10);
-        if ( dataSet.length % 10 == 0 ){
-           
-           
+        numberDataPerFold = Math.floor(dataSet.length / 10);
+        let numberOfFolds = 10;
+        if ( dataSet.length % 10 != 0 ){
+            numberOfFolds = 11
         };
-        console.log(numberOfElementsDataTest)
+        console.log(numberDataPerFold)
         
-
-        this.getDataTest(dataSet, dataTest, numberOfElementsDataTest);
-        this.getKMax(dataSet);
-        this.getClasses(dataSet);
-        this.getSuccess();
-        this.getPercent();
-        //this.resetDataSet(dataSet, dataTest);
+        let index = 0
+        for(let i = 0; i < numberOfFolds; i++){
+            if( i == 10){
+                this.getDataTest(dataSet, dataTest, dataSet.length%10, index)
+                
+            } else {
+                this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
+            };
+            this.getSuccess();
+            this.getPercent();
+            this.resetData(dataSet, dataTest, index);
+            index+=numberDataPerFold
+        };
     }
     
     /*start() --> None
@@ -291,8 +300,10 @@ class controller{
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
+            this.getClasses(this.dataSet.dataArray);
             this.arrayShuffle(this.dataSet.dataArray);
-            this.crossvalidation(this.dataSet.dataArray, this.dataTest.dataArray, this.algorithm.numberElementsDataTest);
+            this.getKMax(this.dataSet.dataArray);
+            this.crossvalidation(this.dataSet.dataArray, this.dataTest.dataArray, this.algorithm.numberDataPerFold);
             this.chartAndTextUpdate();  
         };
             
