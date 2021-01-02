@@ -85,12 +85,21 @@ class controller{
             this.classes.push(cluster);
 
         };
+
     };
     /*getKMax(array dataset) --> none
     determine la valeur du k maximum auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
-    getKMax(dataset){
+    getKMax(dataset, numberOfFolds){
         this.algorithm.kMax = Math.floor(Math.sqrt(dataset.length));
+        for(let i = 0; i < numberOfFolds; i++){
 
+            this.algorithm.success.push([])
+            for(let k = 0; k < this.algorithm.kMax ; k++){
+
+                this.algorithm.success[i].push(0);
+
+            };
+        };
     };
     /*arrToClass(array arr) --> str
     retourne la classe la plus représenté, si plusieurs sont égaux ou n'ont aucune --> "undefined" */
@@ -153,13 +162,7 @@ class controller{
     };
     /*getSuccess() --> None
     Permet de sotcker dans un objet global le nombre de bonne prédiction par l'algorithme par k*/
-    getSuccess(){
-
-        for(let k = 0; k < this.algorithm.kMax ; k++){
-
-            this.algorithm.success.push(0);
-
-        };
+    getSuccess(fold){
 
         for ( let i = 0; i < this.dataTest.dataArray.length; i++){  
             let nearest =  this.getKnn(this.dataSet.dataArray, this.dataTest.dataArray[i], this.algorithm.kMax);
@@ -172,13 +175,13 @@ class controller{
              
             
              arr1.push(nearest.slice(0,k+1)); // [nearest1], [nearest1, nearest2], ...
-            
+             console.log(arr1)
              arr2.push(this.arrayToClass(arr1));// [cluster]
             
             
              if ( arr2[0].trim() ==  this.dataTest.dataArray[i][this.dataTest.dataArray[0].length-1].trim() ){
                 
-                 this.algorithm.success[k] += 1;
+                 this.algorithm.success[fold][k] += 1;
                  
              };
             
@@ -190,12 +193,20 @@ class controller{
     };
     /*getPercent() --> None
     Met en pourcentage le nombre de réussite par paramètre k et le stock dans un autre objet global*/
-    getPercent(){
-        let total = this.dataTest.dataArray.length;
+    getPercent(numberOfFolds, numberDataPerFold){
+        console.log(this.algorithm.success)
         
-        this.algorithm.percentages = this.algorithm.success.map(function(x){
-           return 100* x / total;
-        });
+        for(let j = 0; j < this.algorithm.kMax; j++){
+            let subtotal = 0
+            
+            for(let i = 0; i < numberOfFolds; i++){
+                subtotal += this.algorithm.success[i][j]
+                console.log(this.algorithm.success[i][j])
+            }
+            console.log(subtotal)
+            this.algorithm.percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100)
+        }
+        console.log(this.algorithm.percentages)
     };
     /*chartAndTextUpdate()--> none
     Permet d'afficher le graphe dans la page html et de mettre à jour le texte*/
@@ -223,7 +234,15 @@ class controller{
             data: [],//ordonée
         }]
         },
-        options: {}
+        options:{
+            scales: {
+              yAxes : [{
+                ticks : {
+                  max : 100,    
+                }
+              }]
+            }
+          }
         });
 
 
@@ -246,17 +265,17 @@ class controller{
     Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
     
     getDataTest(dataArray, dataTestArray, numberOfData, index ){
-        console.log(numberOfData)
+        
         let arrayTest = dataArray.slice(index,numberOfData+index);
         
         for ( let i = 0; i < numberOfData; i++){
             dataTestArray.push(arrayTest[i]);
         };
-        console.log(this.dataTest.dataArray);
+        
         dataArray.splice(index,numberOfData);
     };
 
-    /*resetDataSet() --> none
+    /*resetDataSet(array dataSet, array dataTest, number index) --> none
     remet le dataSet comme il était avant d'être séparé*/
     resetData(dataSet, dataTest, index){
         for ( let i = dataTest.length-1; i >= 0; i--){
@@ -266,7 +285,7 @@ class controller{
         dataTest.splice(0,)
     }
 
-    /*crossvalidation() --> none
+    /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
     crossvalidation(dataSet, dataTest, numberDataPerFold){
         
@@ -275,21 +294,20 @@ class controller{
         if ( dataSet.length % 10 != 0 ){
             numberOfFolds = 11
         };
-        console.log(numberDataPerFold)
-        
+        this.getKMax(dataSet, numberOfFolds);
         let index = 0
         for(let i = 0; i < numberOfFolds; i++){
-            if( i == 10){
+            if( i == 10 ){
                 this.getDataTest(dataSet, dataTest, dataSet.length%10, index)
                 
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
             };
-            this.getSuccess();
-            this.getPercent();
+            this.getSuccess(i);
             this.resetData(dataSet, dataTest, index);
             index+=numberDataPerFold
         };
+        this.getPercent(numberOfFolds, numberDataPerFold);
     }
     
     /*start() --> None
@@ -302,7 +320,6 @@ class controller{
         else {
             this.getClasses(this.dataSet.dataArray);
             this.arrayShuffle(this.dataSet.dataArray);
-            this.getKMax(this.dataSet.dataArray);
             this.crossvalidation(this.dataSet.dataArray, this.dataTest.dataArray, this.algorithm.numberDataPerFold);
             this.chartAndTextUpdate();  
         };
