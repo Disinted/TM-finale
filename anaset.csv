@@ -1,6 +1,10 @@
 1,1,1,1,0,pananas
-1,0,0,1,0,pananas
+1,0,0,1,1,ananas
 1,1,0,0,1,pananas
 1,1,1,0,0,ananas
 0,1,0,1,0,ananas
-1,0,0,1,1,ananas
+1,0,0,1,0,pananas
+1,0,1,1,1,pananas
+0,1,0,0,1,ananas
+0,0,1,1,1,pananas
+0,1,1,0,1,ananas
