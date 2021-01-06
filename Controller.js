@@ -89,18 +89,19 @@ class controller{
     };
     /*getKMax(array dataset) --> none
     determine la valeur du k maximum auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
-    getKMax(dataset, numberOfFolds){
+    getKMax(dataset, numberOfFolds, kmax){
         this.algorithm.kMax = Math.floor(Math.sqrt(dataset.length));
         for(let i = 0; i < numberOfFolds; i++){
 
-            this.algorithm.success.push([])
+            this.algorithm.success.push([]);
             for(let k = 0; k < this.algorithm.kMax ; k++){
 
                 this.algorithm.success[i].push(0);
 
-            };
+            };                  //this.algorithm.kMax peut pas être remplacé ?
         };
     };
+
     /*arrToClass(array arr) --> str
     retourne la classe la plus représenté, si plusieurs sont égaux ou n'ont aucune --> "undefined" */
     arrayToClass(arr, className){
@@ -108,7 +109,7 @@ class controller{
         let compare= [];
         for(let p = 0; p<className.length;p++){
             compare.push(0);
-        }
+        };
         
         for ( let i = 0; i < arr[0].length; i++){
         
@@ -150,6 +151,7 @@ class controller{
         };
 
     };
+    
     /* getKnn(array dataArray, array point, int kMax) --> array
     revoie les k données les plus proches d'un autre donnée sous forme d'array
     */
@@ -199,12 +201,12 @@ class controller{
             let subtotal = 0
             
             for(let i = 0; i < numberOfFolds; i++){
-                subtotal += success[i][j]
-                console.log(success[i][j])
+                subtotal += success[i][j];
+                console.log(success[i][j]);
             }
             console.log(subtotal)
-            percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100)
-        }
+            percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100);
+        };
         //console.log(this.algorithm.percentages)
     };
 
@@ -279,10 +281,10 @@ class controller{
     remet le dataSet comme il était avant d'être séparé*/
     resetData(dataSet, dataTest, index){
         for ( let i = dataTest.length-1; i >= 0; i--){
-            dataSet.splice(index,0,dataTest[i])
+            dataSet.splice(index,0,dataTest[i]);
             
         }
-        dataTest.splice(0,)
+        dataTest.splice(0,);
     }
 
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
@@ -292,20 +294,20 @@ class controller{
         numberDataPerFold = Math.floor(dataSet.length / 10);
         let numberOfFolds = 10;
         if ( dataSet.length % 10 != 0 ){
-            numberOfFolds = 11
+            numberOfFolds = 11;
         };
         this.getKMax(dataSet, numberOfFolds);
-        let index = 0
+        let index = 0;
         for(let i = 0; i < numberOfFolds; i++){
             if( i == 10 ){
-                this.getDataTest(dataSet, dataTest, dataSet.length%10, index)
+                this.getDataTest(dataSet, dataTest, dataSet.length%10, index);
                 
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
             };
             this.getSuccess(i, this.algorithm.success, dataTest, dataSet, this.algorithm.kMax);
             this.resetData(dataSet, dataTest, index);
-            index+=numberDataPerFold
+            index+=numberDataPerFold;
         };
         this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.percentages, this.algorithm.success, this.algorithm.kMax);
     }
