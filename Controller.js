@@ -89,14 +89,16 @@ class controller{
     };
     /*getKMax(array dataset) --> none
     determine la valeur du k maximum auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
-    getKMax(dataset, numberOfFolds, kmax){
+    getKMax(dataset, numberOfFolds, success){
+        
         this.algorithm.kMax = Math.floor(Math.sqrt(dataset.length));
+        
         for(let i = 0; i < numberOfFolds; i++){
 
             this.algorithm.success.push([]);
             for(let k = 0; k < this.algorithm.kMax ; k++){
 
-                this.algorithm.success[i].push(0);
+                success[i].push(0);
 
             };                  //this.algorithm.kMax peut pas être remplacé ?
         };
@@ -123,9 +125,7 @@ class controller{
                     compare[j] +=1  ;
                     
                 };
-
-            };
-            
+            };        
         };
         
         
@@ -149,7 +149,6 @@ class controller{
             
             return "undefined" ;
         };
-
     };
     
     /* getKnn(array dataArray, array point, int kMax) --> array
@@ -185,13 +184,10 @@ class controller{
                  success[fold][k] += 1;
                  
              };
-            
-
             };
-        
-        };
-                        
+        };                    
     };
+
     /*getPercent() --> None
     Met en pourcentage le nombre de réussite par paramètre k et le stock dans un autre objet global*/
     getPercent(numberOfFolds, numberDataPerFold, percentages, success, kMax){
@@ -231,7 +227,7 @@ class controller{
         data: {
         labels: [], //Abscisse
         datasets: [{
-            label: 'Pourcentage de fiabilité',
+            label : "Pourcentages de réussite avec les k données plus porche",
             backgroundColor: 'rgb(0, 99, 132)',
             data: [],//ordonée
         }]
@@ -239,9 +235,19 @@ class controller{
         options:{
             scales: {
               yAxes : [{
+                scaleLabel:{
+                    display : true,
+                    labelString : "Pourcentages"
+                },
                 ticks : {
                   max : 100,    
                 }
+              }],
+              xAxes : [{
+                  scaleLabel:{
+                      display : true,
+                      labelString : "Valeur de k"
+                  }
               }]
             }
           }
@@ -296,7 +302,7 @@ class controller{
         if ( dataSet.length % 10 != 0 ){
             numberOfFolds = 11;
         };
-        this.getKMax(dataSet, numberOfFolds);
+        this.getKMax(dataSet, numberOfFolds, this.algorithm.success);
         let index = 0;
         for(let i = 0; i < numberOfFolds; i++){
             if( i == 10 ){
@@ -312,6 +318,12 @@ class controller{
         this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.percentages, this.algorithm.success, this.algorithm.kMax);
     }
     
+    /*showBestKValue()
+    Affiche à l'utilisateur les meilleurs paramètre k à prendre*/
+    
+    showBestKValue(){
+
+    }
     /*start() --> None
     corps princpal du programme*/ 
     start(){
@@ -324,7 +336,6 @@ class controller{
             this.arrayShuffle(this.dataSet.dataArray);
             this.crossvalidation(this.dataSet.dataArray, this.dataTest.dataArray, this.algorithm.numberDataPerFold);
             this.chartAndTextUpdate();  
-        };
-            
+        };        
      };
 };
