@@ -58,7 +58,7 @@ class controller{
                 dataArray[i] = dataArray[j];
                 dataArray[j] = actualIndex;
             }
-        console.log(dataArray)
+        //console.log(dataArray)
         return dataArray;
     }
 
@@ -100,7 +100,7 @@ class controller{
 
                 success[i].push(0);
 
-            };                  //this.algorithm.kMax peut pas être remplacé ?
+            };                  
         };
     };
 
@@ -175,7 +175,7 @@ class controller{
              
             
              arr1.push(nearest.slice(0,k+1)); // [nearest1], [nearest1, nearest2], ...
-             console.log(arr1)
+             //console.log(arr1)
              arr2.push(this.arrayToClass(arr1, this.classes));// [cluster]
             
             
@@ -185,25 +185,27 @@ class controller{
                  
              };
             };
-        };                    
+        };   
+        return success                 
     };
 
     /*getPercent() --> None
     Met en pourcentage le nombre de réussite par paramètre k et le stock dans un autre objet global*/
     getPercent(numberOfFolds, numberDataPerFold, percentages, success, kMax){
-        //console.log(this.algorithm.success)
+        console.log(this.algorithm.success)
         
         for(let j = 0; j < kMax; j++){
             let subtotal = 0
             
             for(let i = 0; i < numberOfFolds; i++){
                 subtotal += success[i][j];
-                console.log(success[i][j]);
+                //console.log(success[i][j]);
             }
             console.log(subtotal)
-            percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100);
+            percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
         };
-        //console.log(this.algorithm.percentages)
+        console.log(this.algorithm.percentages)
+        
     };
 
     /*chartAndTextUpdate()--> none
@@ -293,17 +295,22 @@ class controller{
         dataTest.splice(0,);
     }
 
-    /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
-    estimation de la fiabilité du programme*/
-    crossvalidation(dataSet, dataTest, numberDataPerFold){
-        
-        numberDataPerFold = Math.floor(dataSet.length / 10);
+    /*numberFolds() --> int
+    Donne le nombre de folds dont on aura besoin pour le dataset.*/
+    numberFolds(dataSet){
         let numberOfFolds = 10;
         if ( dataSet.length % 10 != 0 ){
             numberOfFolds = 11;
         };
-        this.getKMax(dataSet, numberOfFolds, this.algorithm.success);
+        return numberOfFolds
+    }
+
+    /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
+    estimation de la fiabilité du programme*/
+    crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds){
+        this.arrayShuffle(dataSet);
         let index = 0;
+        
         for(let i = 0; i < numberOfFolds; i++){
             if( i == 10 ){
                 this.getDataTest(dataSet, dataTest, dataSet.length%10, index);
@@ -312,29 +319,45 @@ class controller{
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
             };
             this.getSuccess(i, this.algorithm.success, dataTest, dataSet, this.algorithm.kMax);
+            
             this.resetData(dataSet, dataTest, index);
             index+=numberDataPerFold;
         };
-        this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.percentages, this.algorithm.success, this.algorithm.kMax);
+        
+        //console.log(this.algorithm.success)
+        
     }
     
+    repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds){
+        for ( let i = 0; i < 10; i++){
+        this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds);
+        }
+        this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.percentages, this.algorithm.success, this.algorithm.kMax);
+    }
     /*showBestKValue()
     Affiche à l'utilisateur les meilleurs paramètre k à prendre*/
-    
+
     showBestKValue(){
 
     }
     /*start() --> None
     corps princpal du programme*/ 
     start(){
+        let dataSet = this.dataSet.dataArray
+        let numberOfFolds = this.numberFolds(dataSet)
+        let numberDataPerFold = Math.floor(dataSet.length / 10)
+
+
+        this.getKMax(dataSet, numberOfFolds, this.algorithm.success);
         this.reset(this.algorithm.success, this.algorithm.percentages);
-        if ( this.dataSet.dataArray.length == 0 ){
+        if ( dataSet.length == 0 ){
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
-            this.getClasses(this.dataSet.dataArray, this.classes );
-            this.arrayShuffle(this.dataSet.dataArray);
-            this.crossvalidation(this.dataSet.dataArray, this.dataTest.dataArray, this.algorithm.numberDataPerFold);
+            this.getClasses(dataSet, this.classes);
+            
+            this.repeatedCrossValidation(dataSet, this.dataTest.dataArray, numberDataPerFold, numberOfFolds);
+            
             this.chartAndTextUpdate();  
         };        
      };
