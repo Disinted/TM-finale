@@ -6,9 +6,23 @@ class controller{
 
         this.algorithm = {
             numberDataPerFold : undefined,
+
+
             kMax : undefined ,
+            set setKMax (int){
+                this.kMax = int;
+            },
+
+
             success:[],
+            set resetSuccess(emptyArray){
+                this.success = emptyArray;
+            },
+
             percentages :[],
+            set resetPercentages(emptyArray){
+                this.percentages = emptyArray;
+            },
         };
 
         this.dataSet = {
@@ -20,6 +34,9 @@ class controller{
         };
 
     };
+
+
+
     /*getDataSet(csv input, str dataType) --> none
     enregistre dans des objets globaux les données sous forme d'array d'array ( [[data1], [data2]])*/
     getDataSet(input, dataType) {
@@ -91,17 +108,18 @@ class controller{
     determine la valeur du k maximum auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
     getKMax(dataset, numberOfFolds, success){
         
-        this.algorithm.kMax = Math.floor(Math.sqrt(dataset.length));
+        let kMax = Math.floor(Math.sqrt(dataset.length));
         
         for(let i = 0; i < numberOfFolds; i++){
 
             this.algorithm.success.push([]);
-            for(let k = 0; k < this.algorithm.kMax ; k++){
+            for(let k = 0; k < kMax ; k++){
 
                 success[i].push(0);
 
             };                  
         };
+        return kMax
     };
 
     /*arrToClass(array arr) --> str
@@ -266,9 +284,10 @@ class controller{
     };
     /*reset() --> none
     remet à zéro les résultats finaux du programme*/
-    reset(success, percentages){
-        success = [];
-        percentages = [];
+    reset(){
+        this.algorithm.resetSuccess = [];
+        this.algorithm.resetPercentages = [];
+        
     };
 
         /*getDataTest(array dataArray, array dataTestArray) --> none
@@ -309,6 +328,7 @@ class controller{
     estimation de la fiabilité du programme*/
     crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds){
         this.arrayShuffle(dataSet);
+        console.log(dataSet[0])
         let index = 0;
         
         for(let i = 0; i < numberOfFolds; i++){
@@ -347,9 +367,10 @@ class controller{
         let numberOfFolds = this.numberFolds(dataSet)
         let numberDataPerFold = Math.floor(dataSet.length / 10)
 
-
-        this.getKMax(dataSet, numberOfFolds, this.algorithm.success);
-        this.reset(this.algorithm.success, this.algorithm.percentages);
+        this.reset();
+        
+        this.algorithm.setKMax = this.getKMax(dataSet, numberOfFolds, this.algorithm.success);
+        
         if ( dataSet.length == 0 ){
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
