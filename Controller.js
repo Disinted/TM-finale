@@ -2,11 +2,21 @@ class controller{
 
     constructor(){
 
-        this.classes = [];
+        this.classes = {
+
+            categories : [],
+            set setCategories(categoryName){
+                this.category.push(categoryName);
+            },
+
+            get category(){
+                return this.categories
+            }
+
+        },
+        
 
         this.algorithm = {
-            numberDataPerFold : undefined,
-
 
             kMax : undefined ,
             set setKMax (int){
@@ -34,6 +44,7 @@ class controller{
         };
 
     };
+
 
 
 
@@ -99,7 +110,7 @@ class controller{
                 continue;
             };
 
-            classes.push(cluster);
+            this.classes.setCategories = cluster;
 
         };
 
@@ -194,7 +205,7 @@ class controller{
             
              arr1.push(nearest.slice(0,k+1)); // [nearest1], [nearest1, nearest2], ...
              //console.log(arr1)
-             arr2.push(this.arrayToClass(arr1, this.classes));// [cluster]
+             arr2.push(this.arrayToClass(arr1, this.classes.category));// [cluster]
             
             
              if ( arr2[0].trim() ==  dataTest[i][dataTest[0].length-1].trim() ){
@@ -375,7 +386,7 @@ class controller{
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
-            this.getClasses(dataSet, this.classes);
+            this.getClasses(dataSet, this.classes.category);
             
             this.repeatedCrossValidation(dataSet, this.dataTest.dataArray, numberDataPerFold, numberOfFolds);
             
