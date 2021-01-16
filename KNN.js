@@ -1,4 +1,5 @@
-
+/* class KNN
+classe contenant l'algorithme k-NN*/
 class KNN{
     constructor(parameters){
         this.params = {
