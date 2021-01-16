@@ -1,3 +1,4 @@
+
 class controller{
 
     constructor(){
@@ -6,12 +7,12 @@ class controller{
 
             categories : [],
             set setCategories(categoryName){
-                this.category.push(categoryName);
+                this.categories.push(categoryName);
             },
 
-            get category(){
+            get getCategory(){
                 return this.categories
-            }
+            },
 
         },
         
@@ -22,37 +23,69 @@ class controller{
             set setKMax (int){
                 this.kMax = int;
             },
+            get getKMax(){
+                return this.kMax
+            },
 
 
             success:[],
             set resetSuccess(emptyArray){
                 this.success = emptyArray;
             },
+            set pushFolds(array){
+                this.success.push(array)
+            },
+            get getSuccess(){
+                return this.success
+            },
 
             percentages :[],
             set resetPercentages(emptyArray){
                 this.percentages = emptyArray;
             },
+            set pushPercentages(int){
+                this.percentages.push(int)
+            },
+            get getPercentages(){
+                return this.percentages
+            },
         };
 
         this.dataSet = {
             dataArray : [],
+            get getDataSet(){
+                return this.dataArray
+            }
         };
 
         this.dataTest = {
             dataArray : [],
+            get getDataArray(){
+                return this.dataArray
+            }
         };
+
+        this.html ={
+            set createChartCanvas(text){
+                this.canvas = document.getElementById('interface').innerHTML = text          
+            },
+            set modifyBaseText (text){
+                this.baseText = document.getElementById('baseText').innerHTML = text
+            }
+        }
 
     };
 
-
+    
 
 
     /*getDataSet(csv input, str dataType) --> none
     enregistre dans des objets globaux les données sous forme d'array d'array ( [[data1], [data2]])*/
     getDataSet(input, dataType) {
         //permet de réinitialiser la valeur de l'array si l'utilisateur charge plusieurs fois le fichier
+        if (dataType.dataArray.length != 0){
         dataType.dataArray = [];
+        }        
         //récupération des csv
         if (input.files && input.files[0]) {
     
@@ -65,19 +98,19 @@ class controller{
 
                 for ( let x = 0; x < data.length; x++){
 
-                    dataType.dataArray.push(data[x].split(","));
+                    dataType.getDataSet.push(data[x].split(","));
 
                 };
              };
         };
         //Confirmation du chargement du dataset
-        if ( dataType == this.dataSet){
+        
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
-        };
+        
     }; 
 
 
-    /*arrayShuffle(array dataArray) --> array
+    /*arrayShuffle(array dataArray) --> none
     Mélange les données de l'array ( algorithme mélange de Fisher-Yates )*/
     arrayShuffle(dataArray){
             for( let i = dataArray.length - 1; i > 0; i--){
@@ -87,7 +120,7 @@ class controller{
                 dataArray[j] = actualIndex;
             }
         //console.log(dataArray)
-        return dataArray;
+        
     }
 
     /*getClasses(arr dataArray) --> none
@@ -115,22 +148,10 @@ class controller{
         };
 
     };
-    /*getKMax(array dataset) --> none
-    determine la valeur du k maximum auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
-    getKMax(dataset, numberOfFolds, success){
-        
-        let kMax = Math.floor(Math.sqrt(dataset.length));
-        
-        for(let i = 0; i < numberOfFolds; i++){
-
-            this.algorithm.success.push([]);
-            for(let k = 0; k < kMax ; k++){
-
-                success[i].push(0);
-
-            };                  
-        };
-        return kMax
+    /*findKMax(array dataset) --> none
+    determine la valeur maximal de k auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
+    findKMax(dataset){
+        return Math.floor(Math.sqrt(dataset.length));
     };
 
     /*arrToClass(array arr) --> str
@@ -180,6 +201,7 @@ class controller{
         };
     };
     
+    
     /* getKnn(array dataArray, array point, int kMax) --> array
     revoie les k données les plus proches d'un autre donnée sous forme d'array
     */
@@ -190,12 +212,12 @@ class controller{
         return knn.params.nN;
     };
     /*getSuccess() --> None
-    Permet de sotcker dans un objet global le nombre de bonne prédiction par l'algorithme par k*/
+    Permet de sotcker dans un objet global le nombre de bonne prédiction par l'algorithme par valeur de k*/
     getSuccess(fold, success, dataTest, dataSet, kMax){
 
         for ( let i = 0; i < dataTest.length; i++){  
             let nearest =  this.getKnn(dataSet, dataTest[i], kMax);
-            for(let k = 0; k < this.algorithm.kMax ; k++){
+            for(let k = 0; k < kMax ; k++){
 
              let arr1=[];
              let arr2=[];
@@ -205,7 +227,7 @@ class controller{
             
              arr1.push(nearest.slice(0,k+1)); // [nearest1], [nearest1, nearest2], ...
              //console.log(arr1)
-             arr2.push(this.arrayToClass(arr1, this.classes.category));// [cluster]
+             arr2.push(this.arrayToClass(arr1, this.classes.getCategory));// [cluster]
             
             
              if ( arr2[0].trim() ==  dataTest[i][dataTest[0].length-1].trim() ){
@@ -215,23 +237,23 @@ class controller{
              };
             };
         };   
-        return success                 
+                        
     };
 
     /*getPercent() --> None
     Met en pourcentage le nombre de réussite par paramètre k et le stock dans un autre objet global*/
-    getPercent(numberOfFolds, numberDataPerFold, percentages, success, kMax){
-        console.log(this.algorithm.success)
+    getPercent(numberOfFolds, numberDataPerFold, success, kMax){
+        console.log(this.algorithm.getSuccess)
         
         for(let j = 0; j < kMax; j++){
             let subtotal = 0
             
             for(let i = 0; i < numberOfFolds; i++){
                 subtotal += success[i][j];
-                //console.log(success[i][j]);
+                
             }
             console.log(subtotal)
-            percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
+            this.algorithm.pushPercentages = (subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
         };
         console.log(this.algorithm.percentages)
         
@@ -241,10 +263,9 @@ class controller{
     Permet d'afficher le graphe dans la page html et de mettre à jour le texte*/
     chartAndTextUpdate(){
         //text update
-        document.getElementById('baseText').innerHTML = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme.";
-    
-        document.getElementById('interface').innerHTML += '<canvas id="myChart"></canvas>';
-        
+        this.html.modifyBaseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme.";  
+        this.html.createChartCanvas = '<canvas id="myChart"></canvas>';
+         
         //chart update
         
         
@@ -268,7 +289,7 @@ class controller{
               yAxes : [{
                 scaleLabel:{
                     display : true,
-                    labelString : "Pourcentages"
+                    labelString : "Pourcentages" //Etiquette
                 },
                 ticks : {
                   max : 100,    
@@ -277,7 +298,7 @@ class controller{
               xAxes : [{
                   scaleLabel:{
                       display : true,
-                      labelString : "Valeur de k"
+                      labelString : "Valeur de k" //Etiquette
                   }
               }]
             }
@@ -285,8 +306,8 @@ class controller{
         });
 
 
-        chart.data.datasets[0].data = program.algorithm.percentages
-        for ( let k = 1; k <= this.algorithm.kMax; k++){
+        chart.data.datasets[0].data = program.algorithm.getPercentages
+        for ( let k = 1; k <= this.algorithm.getKMax; k++){
             chart.data.labels.push(k);
             
         };
@@ -337,7 +358,7 @@ class controller{
 
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
-    crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds){
+    crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
         this.arrayShuffle(dataSet);
         console.log(dataSet[0])
         let index = 0;
@@ -349,21 +370,21 @@ class controller{
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
             };
-            this.getSuccess(i, this.algorithm.success, dataTest, dataSet, this.algorithm.kMax);
+            this.getSuccess(i, this.algorithm.getSuccess, dataTest, dataSet, kMax);
             
             this.resetData(dataSet, dataTest, index);
             index+=numberDataPerFold;
         };
         
-        //console.log(this.algorithm.success)
+       
         
     }
     
-    repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds){
+    repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
         for ( let i = 0; i < 10; i++){
-        this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds);
+        this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax);
         }
-        this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.percentages, this.algorithm.success, this.algorithm.kMax);
+        this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.getSuccess, kMax);
     }
     /*showBestKValue()
     Affiche à l'utilisateur les meilleurs paramètre k à prendre*/
@@ -371,24 +392,36 @@ class controller{
     showBestKValue(){
 
     }
+
+    createFolds(success, numberOfFolds){
+        for(let i = 0; i < numberOfFolds; i++){
+
+            this.algorithm.pushFolds = [];
+            for(let k = 0; k < this.algorithm.getKMax ; k++){
+
+                success[i].push(0);
+
+            };                  
+        };
+    }
     /*start() --> None
     corps princpal du programme*/ 
     start(){
-        let dataSet = this.dataSet.dataArray
+        let dataSet = this.dataSet.getDataSet
         let numberOfFolds = this.numberFolds(dataSet)
         let numberDataPerFold = Math.floor(dataSet.length / 10)
 
         this.reset();
         
-        this.algorithm.setKMax = this.getKMax(dataSet, numberOfFolds, this.algorithm.success);
-        
+        this.algorithm.setKMax = this.findKMax(dataSet, numberOfFolds, this.algorithm.getSuccess);
+        this.createFolds(this.algorithm.getSuccess, numberOfFolds)
         if ( dataSet.length == 0 ){
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
-            this.getClasses(dataSet, this.classes.category);
+            this.getClasses(dataSet, this.classes.getCategory);
             
-            this.repeatedCrossValidation(dataSet, this.dataTest.dataArray, numberDataPerFold, numberOfFolds);
+            this.repeatedCrossValidation(dataSet, this.dataTest.getDataArray, numberDataPerFold, numberOfFolds, this.algorithm.getKMax);
             
             this.chartAndTextUpdate();  
         };        

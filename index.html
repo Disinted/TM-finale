@@ -32,6 +32,10 @@
               
                 <div class="form-row">
                   <div class="col">
+                    <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus approprié pour un certain dataset. 
+                      Vous aurez besoin d'un set contenant les données et d'un set d'entraînement qui prend certains éléments du dataset afin de voir si l'algorithme
+                      est capable de trouver la bonne catégorie.
+                    </p>
                     <div>
                       <input type="file" class="inputfile" id="uploadfile1" onchange="program.getDataSet(this, program.dataSet)"> 
                       <label id="labelSet"  for="uploadfile1">Choisissez le fichier du dataSet</label>
@@ -42,11 +46,9 @@
               
             
         </div>
+        
         <div class="card-body" id="interface">
-          <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus approprié pour un certain dataset. 
-            Vous aurez besoin d'un set contenant les données et d'un set d'entraînement qui prend certains éléments du dataset afin de voir si l'algorithme
-            est capable de trouver la bonne catégorie.
-          </p>
+
         </div>
     </div>
   </div>
