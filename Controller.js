@@ -27,6 +27,13 @@ class controller{
                 return this.kMax
             },
 
+            distanceMax : undefined,
+            set setDistanceMax (int){
+                this.distanceMax = int
+            },
+            get getDistanceMax(){
+                return this.distanceMax
+            },
 
             success:[],
             set resetSuccess(emptyArray){
@@ -201,6 +208,11 @@ class controller{
         };
     };
     
+    /*getDistanceMax() --> int
+    */
+    getDistanceMax(){
+
+    }
     
     /* getKnn(array dataArray, array point, int kMax) --> array
     revoie les k données les plus proches d'un autre donnée sous forme d'array
