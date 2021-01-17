@@ -289,7 +289,7 @@ class controller{
                 
             }
             console.log(subtotal)
-            this.algorithm.pushPercentages = (subtotal/(numberOfFolds*numberDataPerFold)*100 /* /10*/); // le /10--> nombre de répétition crossvalidation
+            this.algorithm.pushPercentages = (subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
         };
         console.log(this.algorithm.percentages)
         
@@ -299,7 +299,7 @@ class controller{
     Permets d'afficher le graphe dans la page html et de mettre à jour le texte*/
     chartAndTextUpdate(){
         //text update
-        this.html.modifyBaseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme.";  
+        this.html.modifyBaseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeure de k proposée soit constamment le meilleur à choisir";  
         this.html.createChartCanvas = '<canvas id="myChart"></canvas>';
          
         //chart update
@@ -341,8 +341,13 @@ class controller{
           }
         });
 
-
-        chart.data.datasets[0].data = program.algorithm.getPercentages
+        let percent = [];
+        
+        for (let i = 0; i < this.algorithm.getPercentages.length; i++){
+            percent.push(this.algorithm.getPercentages[i]);
+        }
+        
+        chart.data.datasets[0].data = percent
         for ( let k = 1; k <= this.algorithm.getKMax; k++){
             chart.data.labels.push(k);
             
@@ -395,7 +400,7 @@ class controller{
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
     crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
-        //this.arrayShuffle(dataSet);
+        this.arrayShuffle(dataSet);
         console.log(dataSet[0])
         let index = 0;
         
@@ -418,15 +423,24 @@ class controller{
     
     repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
         let distMax = this.getDistanceMax()
-        //for ( let i = 0; i < 10; i++){
+        for ( let i = 0; i < 10; i++){
         this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax);
-        //}
+        }
         this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.getSuccess, kMax);
     }
     /*showBestKValue()
-    Affiche à l'utilisateur les meilleurs paramètre k à prendre*/
+    Affiche à l'utilisateur les meilleurs paramètre k à prendre
+    non-optimisé /!\
+    */
 
     showBestKValue(){
+        
+        let percent = this.algorithm.getPercentages
+        
+        function getBestK (){  
+            return percent.indexOf(Math.max.apply(null, percent ))+1
+        }
+        document.getElementById('bestK').innerHTML = "Le meilleur k à choisir dans ce cas est " + String(getBestK())
         
     }
 
@@ -460,6 +474,8 @@ class controller{
             this.repeatedCrossValidation(dataSet, this.dataTest.getDataArray, numberDataPerFold, numberOfFolds, this.algorithm.getKMax);
             
             this.chartAndTextUpdate();  
-        };        
+            this.showBestKValue()
+        }; 
      };
+
 };

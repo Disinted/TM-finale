@@ -21,7 +21,7 @@
 <body class="bg-info py-5">
     
     <script>
-        let program = new controller()
+        let bestKFinder = new controller()
         
     </script>
   <!-- mise en page avec l'utilisation de Bootstrap-->
@@ -32,15 +32,17 @@
               
                 <div class="form-row">
                   <div class="col">
-                    <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus approprié pour un certain dataset. 
-                      Vous aurez besoin d'un set contenant les données et d'un set d'entraînement qui prend certains éléments du dataset afin de voir si l'algorithme
-                      est capable de trouver la bonne catégorie.
+                    <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus approprié pour un certain dataset.
+                      K-NN est un algorithme relativement simple qui calcule la distance entre des données, et regroupe les k données les plus proche pour deviner à quelle catégorie il appartient 
+                      Vous aurez besoin d'un dataSet en format csv afin de voir si l'algorithme
+                      est capable de trouver la bonne catégorie. Le programme utilise le système de <a href=https://machinelearningmastery.com/repeated-k-fold-cross-validation-with-python>repeated-10k-fold-crossvalidation</a>
+
                     </p>
                     <div>
-                      <input type="file" class="inputfile" id="uploadfile1" onchange="program.getDataSet(this, program.dataSet)"> 
+                      <input type="file" class="inputfile" id="uploadfile1" onchange="bestKFinder.getDataSet(this, bestKFinder.dataSet)"> 
                       <label id="labelSet"  for="uploadfile1">Choisissez le fichier du dataSet</label>
                     </div>                  
-                    <button type="input"  class="btn btn-warning" onclick="program.start()" >Calcul</button>
+                    <button type="input"  class="btn btn-warning" onclick="bestKFinder.start()" >Calcul</button>
                   </div>
                 </div>
               
@@ -48,7 +50,9 @@
         </div>
         
         <div class="card-body" id="interface">
-          <div class="card-body" id="bestK">
+          </div>
+          <div class="card-body">
+            <p id="bestK"></p>
         </div>
     </div>
   </div>
