@@ -16,8 +16,10 @@ class KNN{
         for ( let n = 0; n < this.params.dataPoint.length-1; n++){
 
                 result += (Number(train[n])-Number(test[n]))**2;
+               
         };
-        return Math.sqrt(result);      
+        //console.log(Math.sqrt(result)/this.params.distanceMax, this.params.distanceMax,)
+        return Math.sqrt(result)/this.params.distanceMax;      
        };
        
 

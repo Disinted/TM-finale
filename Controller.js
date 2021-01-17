@@ -27,13 +27,6 @@ class controller{
                 return this.kMax
             },
 
-            distanceMax : undefined,
-            set setDistanceMax (int){
-                this.distanceMax = int
-            },
-            get getDistanceMax(){
-                return this.distanceMax
-            },
 
             success:[],
             set resetSuccess(emptyArray){
@@ -89,7 +82,7 @@ class controller{
     /*getDataSet(csv input, str dataType) --> none
     enregistre dans des objets globaux les données sous forme d'array d'array ( [[data1], [data2]])*/
     getDataSet(input, dataType) {
-        //permet de réinitialiser la valeur de l'array si l'utilisateur charge plusieurs fois le fichier
+        //permets de réinitialiser la valeur de l'array si l'utilisateur charge plusieurs fois le fichier
         if (dataType.dataArray.length != 0){
         dataType.dataArray = [];
         }        
@@ -131,7 +124,7 @@ class controller{
     }
 
     /*getClasses(arr dataArray) --> none
-    trouve les différents classe du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
+    trouve les différentes classes du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
     getClasses(dataArray, classes){
         
         
@@ -156,13 +149,13 @@ class controller{
 
     };
     /*findKMax(array dataset) --> none
-    determine la valeur maximal de k auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
+    Détermine la valeur maximale de k auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
     findKMax(dataset){
         return Math.floor(Math.sqrt(dataset.length));
     };
 
     /*arrToClass(array arr) --> str
-    retourne la classe la plus représenté, si plusieurs sont égaux ou n'ont aucune --> "undefined" */
+    retourne la classe la plus représentée, si plusieurs sont égaux ou n'ont aucune --> "undefined" */
     arrayToClass(arr, className){
         
         let compare= [];
@@ -191,7 +184,7 @@ class controller{
         function numberOfOccurence(array, value) {
             var count = 0;
             array.forEach((v) => (v === value && count++));
-            return count ; //vérifie si le plus grand nombre apparait plusieurs fois (ex: [0,4,4] --> 2, [0,2,5] --> 1)
+            return count ; //vérifie si le plus grand nombre apparaît plusieurs fois (ex: [0,4,4] --> 2, [0,2,5] --> 1)
         };
         
 
@@ -209,26 +202,57 @@ class controller{
     };
     
     /*getDistanceMax() --> int
+    Permets de trouver la distance maximum entre deux données.
     */
     getDistanceMax(){
+        let numberOfInformation = this.dataSet.getDataSet[0].length - 1
+        let shortestArray = [];
+        let highestArray = [];
 
+
+        
+        for (let i = 0; i < numberOfInformation ; i++){ //[0,1,2,..,cluster] index des info
+            shortestArray[i] = Number(this.dataSet.getDataSet[0][i])
+            highestArray[i] = Number(this.dataSet.getDataSet[0][i])
+            for (let j = 1; j < this.dataSet.getDataSet.length; j++){ //dataSet [1,2,3,cluster]
+
+                if ( Number(this.dataSet.getDataSet[j][i]) < shortestArray[i]){
+                    shortestArray[i] = Number(this.dataSet.getDataSet[j][i])
+                   
+                }
+                if ( Number(this.dataSet.getDataSet[j][i]) > highestArray[i]){
+                    highestArray[i] = Number(this.dataSet.getDataSet[j][i])
+                 
+                }
+
+            }
+            
+        }
+        console.log(shortestArray, highestArray)
+        let result = 0;
+        for ( let i = 0; i < numberOfInformation; i++){
+            result += (highestArray[i] - shortestArray[i])**2
+        }
+        console.log(Math.sqrt(result), result)
+        return Math.sqrt(result)
+        
     }
     
     /* getKnn(array dataArray, array point, int kMax) --> array
-    revoie les k données les plus proches d'un autre donnée sous forme d'array
+    revoie les k donnés les plus proches d'une autre donnée sous forme d'array
     */
-    getKnn(dataArray, point, kMax){
+    getKnn(dataArray, point, kMax, distMax){
        
-        let knn = new KNN({dataArray_KNN : dataArray, dataPoint : point , k: kMax });
+        let knn = new KNN({dataArray_KNN : dataArray, dataPoint : point , k: kMax, distanceMax : distMax });
         knn.getNN();
         return knn.params.nN;
     };
     /*getSuccess() --> None
-    Permet de sotcker dans un objet global le nombre de bonne prédiction par l'algorithme par valeur de k*/
-    getSuccess(fold, success, dataTest, dataSet, kMax){
-
+    Permets de stocker dans un objet global le nombre de bonnes prédictions par l'algorithme par valeur de k*/
+    getSuccess(fold, success, dataTest, dataSet, kMax, distMax){
+        
         for ( let i = 0; i < dataTest.length; i++){  
-            let nearest =  this.getKnn(dataSet, dataTest[i], kMax);
+            let nearest =  this.getKnn(dataSet, dataTest[i], kMax, distMax );
             for(let k = 0; k < kMax ; k++){
 
              let arr1=[];
@@ -253,7 +277,7 @@ class controller{
     };
 
     /*getPercent() --> None
-    Met en pourcentage le nombre de réussite par paramètre k et le stock dans un autre objet global*/
+    Mets en pourcentage le nombre de réussites par paramètre k et le stock dans un autre objet global*/
     getPercent(numberOfFolds, numberDataPerFold, success, kMax){
         console.log(this.algorithm.getSuccess)
         
@@ -265,14 +289,14 @@ class controller{
                 
             }
             console.log(subtotal)
-            this.algorithm.pushPercentages = (subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
+            this.algorithm.pushPercentages = (subtotal/(numberOfFolds*numberDataPerFold)*100 /* /10*/); // le /10--> nombre de répétition crossvalidation
         };
         console.log(this.algorithm.percentages)
         
     };
 
     /*chartAndTextUpdate()--> none
-    Permet d'afficher le graphe dans la page html et de mettre à jour le texte*/
+    Permets d'afficher le graphe dans la page html et de mettre à jour le texte*/
     chartAndTextUpdate(){
         //text update
         this.html.modifyBaseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme.";  
@@ -335,7 +359,7 @@ class controller{
     };
 
         /*getDataTest(array dataArray, array dataTestArray) --> none
-    Permet de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
+    Permets de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
     
     getDataTest(dataArray, dataTestArray, numberOfData, index ){
         
@@ -349,7 +373,7 @@ class controller{
     };
 
     /*resetDataSet(array dataSet, array dataTest, number index) --> none
-    remet le dataSet comme il était avant d'être séparé*/
+    Remets le dataSet comme il était avant d'être séparé*/
     resetData(dataSet, dataTest, index){
         for ( let i = dataTest.length-1; i >= 0; i--){
             dataSet.splice(index,0,dataTest[i]);
@@ -370,8 +394,8 @@ class controller{
 
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
-    crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
-        this.arrayShuffle(dataSet);
+    crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
+        //this.arrayShuffle(dataSet);
         console.log(dataSet[0])
         let index = 0;
         
@@ -382,7 +406,7 @@ class controller{
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
             };
-            this.getSuccess(i, this.algorithm.getSuccess, dataTest, dataSet, kMax);
+            this.getSuccess(i, this.algorithm.getSuccess, dataTest, dataSet, kMax, distMax);
             
             this.resetData(dataSet, dataTest, index);
             index+=numberDataPerFold;
@@ -393,16 +417,17 @@ class controller{
     }
     
     repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
-        for ( let i = 0; i < 10; i++){
-        this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax);
-        }
+        let distMax = this.getDistanceMax()
+        //for ( let i = 0; i < 10; i++){
+        this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax);
+        //}
         this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.getSuccess, kMax);
     }
     /*showBestKValue()
     Affiche à l'utilisateur les meilleurs paramètre k à prendre*/
 
     showBestKValue(){
-
+        
     }
 
     createFolds(success, numberOfFolds){
@@ -417,12 +442,11 @@ class controller{
         };
     }
     /*start() --> None
-    corps princpal du programme*/ 
+    corps principal du programme*/ 
     start(){
         let dataSet = this.dataSet.getDataSet
         let numberOfFolds = this.numberFolds(dataSet)
-        let numberDataPerFold = Math.floor(dataSet.length / 10)
-
+        let numberDataPerFold = Math.floor(dataSet.length / 10)     
         this.reset();
         
         this.algorithm.setKMax = this.findKMax(dataSet, numberOfFolds, this.algorithm.getSuccess);
