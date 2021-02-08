@@ -76,7 +76,10 @@ class Controller{
 
     };
 
-    
+    test(file){
+        let data = new GetDataSet(file.files)
+        console.log(file.files)
+    }
 
 
     /*getDataSet(csv input, str dataType) --> none
