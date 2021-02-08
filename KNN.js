@@ -14,12 +14,13 @@ class KNN{
     getDistance(train,test){
         let result = null ;
         for ( let n = 0; n < this.params.dataPoint.length-1; n++){
-
-                result += (Number(train[n])-Number(test[n]))**2;
-               
+                
+                result += ((Number(train[n])-Number(test[n]))/this.params.distanceMax[n])**2;
+               //console.log(train[n], test[n], this.params.distanceMax[n])
         };
-        //console.log(Math.sqrt(result)/this.params.distanceMax, this.params.distanceMax,)
-        return Math.sqrt(result)/this.params.distanceMax;      
+        //console.log(Math.sqrt(result))
+        
+        return Math.sqrt(result);      
        };
        
 

@@ -1,5 +1,5 @@
 
-class controller{
+class Controller{
 
     constructor(){
 
@@ -205,13 +205,13 @@ class controller{
     Permets de trouver la distance maximum entre deux données.
     */
     getDistanceMax(){
-        let numberOfInformation = this.dataSet.getDataSet[0].length - 1
+        let numberOfInformation = this.dataSet.getDataSet[0].length - 1 //[0,1,2,cluster] --> 3 informations
         let shortestArray = [];
         let highestArray = [];
-
+        let distanceMax = []
 
         
-        for (let i = 0; i < numberOfInformation ; i++){ //[0,1,2,..,cluster] index des info
+        for (let i = 0; i < numberOfInformation ; i++){ //[0,1,2] index des info
             shortestArray[i] = Number(this.dataSet.getDataSet[0][i])
             highestArray[i] = Number(this.dataSet.getDataSet[0][i])
             for (let j = 1; j < this.dataSet.getDataSet.length; j++){ //dataSet [1,2,3,cluster]
@@ -220,7 +220,7 @@ class controller{
                     shortestArray[i] = Number(this.dataSet.getDataSet[j][i])
                    
                 }
-                if ( Number(this.dataSet.getDataSet[j][i]) > highestArray[i]){
+                else if ( Number(this.dataSet.getDataSet[j][i]) > highestArray[i]){
                     highestArray[i] = Number(this.dataSet.getDataSet[j][i])
                  
                 }
@@ -231,10 +231,10 @@ class controller{
         console.log(shortestArray, highestArray)
         let result = 0;
         for ( let i = 0; i < numberOfInformation; i++){
-            result += (highestArray[i] - shortestArray[i])**2
+            distanceMax.push(highestArray[i]-shortestArray[i])
         }
-        console.log(Math.sqrt(result), result)
-        return Math.sqrt(result)
+        console.log(distanceMax)
+        return distanceMax
         
     }
     
@@ -245,6 +245,7 @@ class controller{
        
         let knn = new KNN({dataArray_KNN : dataArray, dataPoint : point , k: kMax, distanceMax : distMax });
         knn.getNN();
+        
         return knn.params.nN;
     };
     /*getSuccess() --> None
@@ -400,7 +401,7 @@ class controller{
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
     crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
-        this.arrayShuffle(dataSet);
+        //this.arrayShuffle(dataSet);
         console.log(dataSet[0])
         let index = 0;
         
