@@ -40,10 +40,10 @@
 
                     </p>
                     <div>
-                      <input type="file" class="inputfile" id="uploadfile1" onchange=""> <!-- bestKFinder.getDataSet(this, bestKFinder.dataSet) -->
+                      <input type="file" class="inputfile" id="uploadfile1" onchange="bestKFinder.getDataSet(document.getElementById('uploadfile1'))"> <!-- bestKFinder.getDataSet(this, bestKFinder.dataSet) -->
                       <label id="labelSet"  for="uploadfile1">Choisissez le fichier du dataSet</label>
                     </div>                  
-                    <button type="input"  class="btn btn-warning" onclick="bestKFinder.test(document.getElementById('uploadfile1'))" >Calcul</button>
+                    <button type="input"  class="btn btn-warning" onclick="bestKFinder.start()" >Calcul</button>
                   </div>
                 </div>
               

@@ -75,42 +75,17 @@ class Controller{
         }
 
     };
-
-    test(file){
-        let data = new GetDataSet(file.files)
-        console.log(file.files)
-    }
-
-
-    /*getDataSet(csv input, str dataType) --> none
-    enregistre dans des objets globaux les données sous forme d'array d'array ( [[data1], [data2]])*/
-    getDataSet(input, dataType) {
-        //permets de réinitialiser la valeur de l'array si l'utilisateur charge plusieurs fois le fichier
-        if (dataType.dataArray.length != 0){
-        dataType.dataArray = [];
-        }        
-        //récupération des csv
-        if (input.files && input.files[0]) {
-    
-            let reader = new FileReader();
-            reader.readAsBinaryString(input.files[0]);
-            reader.onload = function (e) {
-                
-                let dataFile = e.target.result;  
-                let data = dataFile.split("\n");
-
-                for ( let x = 0; x < data.length; x++){
-
-                    dataType.getDataSet.push(data[x].split(","));
-
-                };
-             };
+    /*getDataSet(csv file) --> none
+    Récupération des données*/
+    getDataSet(file){
+        if (this.dataSet.dataArray.length != 0){
+            this.dataSet.dataArray = [];
         };
-        //Confirmation du chargement du dataset
-        
+        this.data = new GetDataSet(file.files);
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
-        
-    }; 
+    };
+
+
 
 
     /*arrayShuffle(array dataArray) --> none
@@ -462,6 +437,7 @@ class Controller{
     /*start() --> None
     corps principal du programme*/ 
     start(){
+        this.dataSet.dataArray = this.data.data
         let dataSet = this.dataSet.getDataSet
         let numberOfFolds = this.numberFolds(dataSet)
         let numberDataPerFold = Math.floor(dataSet.length / 10)     
