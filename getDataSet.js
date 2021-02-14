@@ -1,6 +1,6 @@
 class GetDataSet {
     /*constructor(file input-obj) --> none
-    enregistre l'objet de l'input et appèle getDataSet pour lire le fichier*/
+    enregistre l'objet de l'input et appelle getDataSet pour lire le fichier*/
     constructor(file){
         this._file = file;
         this._data = [];

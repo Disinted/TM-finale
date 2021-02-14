@@ -434,7 +434,9 @@ class Controller{
             document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
         }
         else {
-            this.getClasses(dataSet, this.classes.getCategory);
+            let classes = new GetClasses(dataSet);
+            this.classes.categories = [...classes.classes]
+            
             
             this.repeatedCrossValidation(dataSet, this.dataTest.getDataArray, numberDataPerFold, numberOfFolds, this.algorithm.getKMax);
             
