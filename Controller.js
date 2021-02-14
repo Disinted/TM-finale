@@ -75,31 +75,15 @@ class Controller{
         }
 
     };
+
     /*getDataSet(csv file) --> none
     Récupération des données*/
     getDataSet(file){
-        if (this.dataSet.dataArray.length != 0){
-            this.dataSet.dataArray = [];
-        };
+
         this.data = new GetDataSet(file.files);
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
     };
 
-
-
-
-    /*arrayShuffle(array dataArray) --> none
-    Mélange les données de l'array ( algorithme mélange de Fisher-Yates )*/
-    arrayShuffle(dataArray){
-            for( let i = dataArray.length - 1; i > 0; i--){
-                let j = Math.floor(Math.random()*(i+1));
-                let actualIndex = dataArray[i];
-                dataArray[i] = dataArray[j];
-                dataArray[j] = actualIndex;
-            }
-        //console.log(dataArray)
-        
-    }
 
     /*getClasses(arr dataArray) --> none
     trouve les différentes classes du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
@@ -183,23 +167,23 @@ class Controller{
     Permets de trouver la distance maximum entre deux données.
     */
     getDistanceMax(){
-        let numberOfInformation = this.dataSet.getDataSet[0].length - 1 //[0,1,2,cluster] --> 3 informations
+        let numberOfInformation = this.data.data[0].length - 1 //[0,1,2,cluster] --> 3 informations
         let shortestArray = [];
         let highestArray = [];
         let distanceMax = []
 
         
         for (let i = 0; i < numberOfInformation ; i++){ //[0,1,2] index des info
-            shortestArray[i] = Number(this.dataSet.getDataSet[0][i])
-            highestArray[i] = Number(this.dataSet.getDataSet[0][i])
-            for (let j = 1; j < this.dataSet.getDataSet.length; j++){ //dataSet [1,2,3,cluster]
+            shortestArray[i] = Number(this.data.data[0][i])
+            highestArray[i] = Number(this.data.data[0][i])
+            for (let j = 1; j < this.data.data.length; j++){ //dataSet [1,2,3,cluster]
 
-                if ( Number(this.dataSet.getDataSet[j][i]) < shortestArray[i]){
-                    shortestArray[i] = Number(this.dataSet.getDataSet[j][i])
+                if ( Number(this.data.data[j][i]) < shortestArray[i]){
+                    shortestArray[i] = Number(this.data.data[j][i])
                    
                 }
-                else if ( Number(this.dataSet.getDataSet[j][i]) > highestArray[i]){
-                    highestArray[i] = Number(this.dataSet.getDataSet[j][i])
+                else if ( Number(this.data.data[j][i]) > highestArray[i]){
+                    highestArray[i] = Number(this.data.data[j][i])
                  
                 }
 
@@ -379,7 +363,8 @@ class Controller{
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
     crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
-        //this.arrayShuffle(dataSet);
+        let shuffledData = new ShuffleArray(dataSet);
+        dataSet = shuffledData.shuffledArray
         console.log(dataSet[0])
         let index = 0;
         
@@ -437,8 +422,8 @@ class Controller{
     /*start() --> None
     corps principal du programme*/ 
     start(){
-        this.dataSet.dataArray = this.data.data
-        let dataSet = this.dataSet.getDataSet
+        
+        let dataSet = this.data.data
         let numberOfFolds = this.numberFolds(dataSet)
         let numberDataPerFold = Math.floor(dataSet.length / 10)     
         this.reset();

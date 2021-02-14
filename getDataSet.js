@@ -1,5 +1,6 @@
 class GetDataSet {
-
+    /*constructor(file input-obj) --> none
+    enregistre l'objet de l'input et appèle getDataSet pour lire le fichier*/
     constructor(file){
         this._file = file;
         this._data = [];
@@ -10,11 +11,12 @@ class GetDataSet {
         return [...this._data]
     }
 
-
+    /* getDataSet(object data) --> none
+        enregistre dans un attribut d'instance les données sous forme de tableau de tableaux [[...], [...], [...]]*/
     getDataSet(data){
         //récupération des csv
         
-        console.log(this._file)
+        
         if (this._file && this._file[0]){
         let reader = new FileReader();
         reader.readAsBinaryString(this._file[0]);
