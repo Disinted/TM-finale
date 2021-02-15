@@ -397,7 +397,7 @@ class Controller{
             text.baseText = "Vous avez oublié de charger le dataSet."
         }
         else {
-            text.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme.";
+            text.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
             let dataSet = this.data.data
             let numberOfFolds = this.numberFolds(dataSet)
             let numberDataPerFold = Math.floor(dataSet.length / 10)     
