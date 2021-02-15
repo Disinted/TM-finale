@@ -85,39 +85,15 @@ class Controller{
     };
 
 
-    /*getClasses(arr dataArray) --> none
-    trouve les différentes classes du dataset automatiquement et les mets dans un attribut d'instance sous forme d'array*/
-    getClasses(dataArray, classes){
-        
-        
-        for (let i = 0; i < dataArray.length; i++){
-            let cluster = dataArray[i][dataArray[i].length-1];
-            let flag = true;
 
-            for ( let j = 0; j < classes.length; j++){
-                if ( cluster.trim() == classes[j].trim()){
-                    flag = false;
-                    break;
-                };
-            };
-
-            if ( flag == false ){
-                continue;
-            };
-
-            this.classes.setCategories = cluster;
-
-        };
-
-    };
     /*findKMax(array dataset) --> none
-    Détermine la valeur maximale de k auquel le programme aurait du sens. Temporairement la racine carrée du total de données dans le dataset*/
+    Détermine la valeur maximale de k auquel le programme aurait du sens.*/
     findKMax(dataset){
         return Math.floor(Math.sqrt(dataset.length));
     };
 
-    /*arrToClass(array arr) --> str
-    retourne la classe la plus représentée, si plusieurs sont égaux ou n'ont aucune --> "undefined" */
+    /*arrToClass(array arr, arr className) --> str
+    retourne la classe la plus représentée, ou "undefined" */
     arrayToClass(arr, className){
         
         let compare= [];
@@ -125,14 +101,14 @@ class Controller{
             compare.push(0);
         };
         
-        for ( let i = 0; i < arr[0].length; i++){
-        
+        for ( let i = 0; i < arr.length; i++){
+            
             
             for (let j= 0 ; j < className.length ; j ++){
 
                 
                 
-                if( arr[0][i][arr[0][0].length-1].trim() == className[j].trim()){
+                if( arr[i][arr[0].length-1].trim() == className[j].trim()){
                    
                     compare[j] +=1  ;
                     
@@ -142,11 +118,12 @@ class Controller{
         
         
         let highestNumber = Math.max.apply(null, compare); //Va chercher le plus grand nombre parmi compare (ex: [0,2,3] --> 3)
-
+        /*numberOfOccurence(array array, int value) --> int
+           vérifie si le plus grand nombre dans array apparaît plusieurs fois (ex: [0,4,4] --> 2 (array = [0,4,4], value = 4), [0,2,5] --> 1)*/
         function numberOfOccurence(array, value) {
             var count = 0;
             array.forEach((v) => (v === value && count++));
-            return count ; //vérifie si le plus grand nombre apparaît plusieurs fois (ex: [0,4,4] --> 2, [0,2,5] --> 1)
+            return count ; 
         };
         
 
@@ -164,7 +141,7 @@ class Controller{
     };
     
     /*getDistanceMax() --> int
-    Permets de trouver la distance maximum entre deux données.
+    Permet de trouver la distance maximale entre deux données données.
     */
     getDistanceMax(){
         let numberOfInformation = this.data.data[0].length - 1 //[0,1,2,cluster] --> 3 informations
@@ -190,17 +167,17 @@ class Controller{
             }
             
         }
-        console.log(shortestArray, highestArray)
-        let result = 0;
+        //console.log(shortestArray, highestArray)
+        
         for ( let i = 0; i < numberOfInformation; i++){
             distanceMax.push(highestArray[i]-shortestArray[i])
         }
-        console.log(distanceMax)
+        //console.log(distanceMax)
         return distanceMax
         
     }
     
-    /* getKnn(array dataArray, array point, int kMax) --> array
+    /* getKnn(array dataArray, array point, int kMax, arr distMax) --> array
     revoie les k donnés les plus proches d'une autre donnée sous forme d'array
     */
     getKnn(dataArray, point, kMax, distMax){
@@ -218,14 +195,14 @@ class Controller{
             let nearest =  this.getKnn(dataSet, dataTest[i], kMax, distMax );
             for(let k = 0; k < kMax ; k++){
 
-             let arr1=[];
+             let arr1 = undefined;
              let arr2=[];
              
              
              
             
-             arr1.push(nearest.slice(0,k+1)); // [nearest1], [nearest1, nearest2], ...
-             //console.log(arr1)
+             arr1 = nearest.slice(0,k+1); // [nearest1], [nearest1, nearest2], ...
+             
              arr2.push(this.arrayToClass(arr1, this.classes.getCategory));// [cluster]
             
             
@@ -242,7 +219,7 @@ class Controller{
     /*getPercent() --> None
     Mets en pourcentage le nombre de réussites par paramètre k et le stock dans un autre objet global*/
     getPercent(numberOfFolds, numberDataPerFold, success, kMax){
-        console.log(this.algorithm.getSuccess)
+        //console.log(this.algorithm.getSuccess)
         
         for(let j = 0; j < kMax; j++){
             let subtotal = 0
@@ -392,20 +369,13 @@ class Controller{
         }
         this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.getSuccess, kMax);
     }
-    /*showBestKValue()
-    Affiche à l'utilisateur les meilleurs paramètre k à prendre
-    non-optimisé /!\
+    /*bestKValue()
+    retourne la meilleure valuer de k à utiliser pour l'algorithme
     */
 
-    showBestKValue(){
-        
+    bestKValue(){       
         let percent = this.algorithm.getPercentages
-        
-        function getBestK (){  
-            return percent.indexOf(Math.max.apply(null, percent ))+1
-        }
-        document.getElementById('bestK').innerHTML = "Le meilleur k à choisir dans ce cas est " + String(getBestK())
-        
+            return percent.indexOf(Math.max.apply(null, percent ))+1     
     }
 
     createFolds(success, numberOfFolds){
@@ -422,26 +392,29 @@ class Controller{
     /*start() --> None
     corps principal du programme*/ 
     start(){
-        
-        let dataSet = this.data.data
-        let numberOfFolds = this.numberFolds(dataSet)
-        let numberDataPerFold = Math.floor(dataSet.length / 10)     
-        this.reset();
-        
-        this.algorithm.setKMax = this.findKMax(dataSet, numberOfFolds, this.algorithm.getSuccess);
-        this.createFolds(this.algorithm.getSuccess, numberOfFolds)
-        if ( dataSet.length == 0 ){
-            document.getElementById("baseText").innerHTML = "Vous avez oublié de charger le dataSet.";
+        let text = new TextController()
+        if ( this.data == undefined){
+            text.baseText = "Vous avez oublié de charger le dataSet."
         }
         else {
+            text.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme.";
+            let dataSet = this.data.data
+            let numberOfFolds = this.numberFolds(dataSet)
+            let numberDataPerFold = Math.floor(dataSet.length / 10)     
+            this.reset();
+        
+            this.algorithm.setKMax = this.findKMax(dataSet, numberOfFolds, this.algorithm.getSuccess);
+            this.createFolds(this.algorithm.getSuccess, numberOfFolds)
+        
             let classes = new GetClasses(dataSet);
             this.classes.categories = [...classes.classes]
             
             
             this.repeatedCrossValidation(dataSet, this.dataTest.getDataArray, numberDataPerFold, numberOfFolds, this.algorithm.getKMax);
             
-            this.chartAndTextUpdate();  
-            this.showBestKValue()
+            //this.chartAndTextUpdate();  
+            let chartUpdate = new ChartController({percentages : this.algorithm.getPercentages, kMax : this.algorithm.kMax})
+            text.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
         }; 
      };
 

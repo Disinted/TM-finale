@@ -9,6 +9,11 @@ class KNN{
             this.params[k] = parameters[k];
         };
     };
+
+    
+
+
+
    /*getDistance(array train, array test) --> number
    Retourne la distance euclidienne entre un point et un autre*/
     getDistance(train,test){
