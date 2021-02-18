@@ -36,6 +36,8 @@ class Controller{
 
     };
 
+
+
     /*getDataSet(csv file) --> none
     Récupération des données*/
     getDataSet(file){
@@ -147,10 +149,11 @@ class Controller{
         
         return knn.params.nN;
     };
-    /*getSuccess() --> None
+    
+    /*getSuccess(int fold, array success, array dataTest, array dataSet, int kMax, array distMax) --> None
     Permets de stocker dans un objet global le nombre de bonnes prédictions par l'algorithme par valeur de k*/
     getSuccess(fold, success, dataTest, dataSet, kMax, distMax){
-        
+        console.log(success)
         for ( let i = 0; i < dataTest.length; i++){  
             let nearest =  this.getKnn(dataSet, dataTest[i], kMax, distMax );
             for(let k = 0; k < kMax ; k++){
@@ -176,10 +179,10 @@ class Controller{
                         
     };
 
-    /*getPercent() --> None
+    /*getPercent(int numberOfFolds, int numberDataPerFold, array success, int kMax) --> None
     Mets en pourcentage le nombre de réussites par paramètre k et le stock dans un autre objet global*/
     getPercent(numberOfFolds, numberDataPerFold, success, kMax){
-        //console.log(this.algorithm.success)
+        
         
         for(let j = 0; j < kMax; j++){
             let subtotal = 0
@@ -227,27 +230,7 @@ class Controller{
         dataTest.splice(0,);
     }
 
-    /*numberFolds() --> int
-    Donne le nombre de folds dont on aura besoin pour le dataset.*/
-    numberFolds(dataSet){
-        let numberOfFolds = 10;
-        if ( dataSet.length % 10 != 0 ){
-            numberOfFolds = 11;
-        };
-        return numberOfFolds
-    }
 
-    createFolds(success, numberOfFolds){
-        for(let i = 0; i < numberOfFolds; i++){
-
-            success.push([]);
-            for(let k = 0; k < this.kMax ; k++){
-
-                success[i].push(0);
-
-            };                  
-        };
-    }
 
 
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
@@ -255,12 +238,12 @@ class Controller{
     crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
         let shuffledData = new ShuffleArray(dataSet);
         dataSet = shuffledData.shuffledArray
-        console.log(dataSet[0])
+        console.log(dataSet[0], this.algorithm.success)
         let index = 0;
         
         for(let i = 0; i < numberOfFolds; i++){
             if( i == 10 ){
-                this.getDataTest(dataSet, dataTest, dataSet.length%10, index);
+                this.getDataTest(dataSet, dataTest, dataSet.length%10, index); //Si les données ne peuvent pas être divié par 10 (ex: 158 --> 158%10 = 8, un 11ème fold a déja été créer si il y a un reste et pour que toutes les données soient testées )
                 
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
@@ -282,10 +265,10 @@ class Controller{
         }
         this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.success, kMax);
     }
+
     /*bestKValue()
     retourne la meilleure valuer de k à utiliser pour l'algorithme
     */
-
     bestKValue(){       
             return this.algorithm.percentages.indexOf(Math.max.apply(null, this.algorithm.percentages ))+1     
     }
@@ -301,20 +284,22 @@ class Controller{
         else {
             text.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
             let dataSet = this.data.data
-            let numberOfFolds = this.numberFolds(dataSet)
-            let numberDataPerFold = Math.floor(dataSet.length / 10)     
+            this.kMax = this.findKMax(dataSet);
+
             this.reset();
-        
-            this.kMax = this.findKMax(dataSet, numberOfFolds, this.algorithm.success);
-            this.createFolds(this.algorithm.success, numberOfFolds)
-        
+
+            let foldsController = new FoldsController(dataSet, this.kMax )
+            let numberOfFolds = foldsController.numberOfFolds
+            let numberDataPerFold = foldsController.dataPerFold
+            this.algorithm.success = foldsController.folds
+                 
             let classes = new GetClasses(dataSet);
             this.classes = [...classes.classes]
             
             
             this.repeatedCrossValidation(dataSet, this.dataTest.getDataArray, numberDataPerFold, numberOfFolds, this.kMax);
             
-            //this.chartAndTextUpdate();  
+            
             let chartUpdate = new ChartController({percentages : this.algorithm.percentages, kMax : this.kMax})
             text.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
         }; 
