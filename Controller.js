@@ -222,7 +222,7 @@ class Controller{
         
         for(let i = 0; i < numberOfFolds; i++){
             if( i == 10 ){
-                this.getDataTest(dataSet, dataTest, dataSet.length%10, index); //Si les données ne peuvent pas être divié par 10 (ex: 158 --> 158%10 = 8, un 11ème fold a déja été créer si il y a un reste et pour que toutes les données soient testées )
+                this.getDataTest(dataSet, dataTest, dataSet.length%10, index); //Si les données ne peuvent pas être divisé par 10 (ex: 158 --> 158%10 = 8, un 11ème fold a déja été créer si il y a un reste et pour que toutes les données soient testées )
                 
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
@@ -279,6 +279,6 @@ class Controller{
             
             let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax})
             text.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
-        }; 
+        };
      };
 };
