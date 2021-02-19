@@ -4,35 +4,14 @@ class Controller{
     constructor(){
 
         this.classes = [];
-        
+        this.success = [];
+        this.percentages = [];
         this.kMax = undefined;
         this.algorithm = {
             success : [],
             percentages : [],
         };
 
-        this.dataSet = {
-            dataArray : [],
-            get getDataSet(){
-                return this.dataArray
-            }
-        };
-
-        this.dataTest = {
-            dataArray : [],
-            get getDataArray(){
-                return this.dataArray
-            }
-        };
-
-        this.html ={
-            set createChartCanvas(text){
-                this.canvas = document.getElementById('interface').innerHTML = text          
-            },
-            set modifyBaseText (text){
-                this.baseText = document.getElementById('baseText').innerHTML = text
-            }
-        }
 
     };
 
@@ -192,17 +171,17 @@ class Controller{
                 
             }
             console.log(subtotal)
-            this.algorithm.percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
+            this.percentages.push(subtotal/(numberOfFolds*numberDataPerFold)*100/10); // le /10--> nombre de répétition crossvalidation
         };
-        console.log(this.algorithm.percentages)
+        console.log(this.percentages)
         
     };
 
     /*reset() --> none
     remet à zéro les résultats finaux du programme*/
     reset(){
-        this.algorithm.success = [];
-        this.algorithm.percentages = [];
+        this.success = [];
+        this.percentages = [];
         
     };
 
@@ -238,7 +217,7 @@ class Controller{
     crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
         let shuffledData = new ShuffleArray(dataSet);
         dataSet = shuffledData.shuffledArray
-        console.log(dataSet[0], this.algorithm.success)
+        console.log(dataSet[0], this.success)
         let index = 0;
         
         for(let i = 0; i < numberOfFolds; i++){
@@ -248,29 +227,26 @@ class Controller{
             } else {
                 this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
             };
-            this.getSuccess(i, this.algorithm.success, dataTest, dataSet, kMax, distMax);
+            this.getSuccess(i, this.success, dataTest, dataSet, kMax, distMax);
             
             this.resetData(dataSet, dataTest, index);
             index+=numberDataPerFold;
         };
-        
-       
-        
-    }
+    };
     
     repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
         let distMax = this.getDistanceMax()
         for ( let i = 0; i < 10; i++){
         this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax);
         }
-        this.getPercent(numberOfFolds, numberDataPerFold, this.algorithm.success, kMax);
+        this.getPercent(numberOfFolds, numberDataPerFold, this.success, kMax);
     }
 
     /*bestKValue()
     retourne la meilleure valuer de k à utiliser pour l'algorithme
     */
     bestKValue(){       
-            return this.algorithm.percentages.indexOf(Math.max.apply(null, this.algorithm.percentages ))+1     
+            return this.percentages.indexOf(Math.max.apply(null, this.percentages ))+1     
     }
 
 
@@ -284,6 +260,7 @@ class Controller{
         else {
             text.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
             let dataSet = this.data.data
+            let dataTest = []
             this.kMax = this.findKMax(dataSet);
 
             this.reset();
@@ -291,16 +268,16 @@ class Controller{
             let foldsController = new FoldsController(dataSet, this.kMax )
             let numberOfFolds = foldsController.numberOfFolds
             let numberDataPerFold = foldsController.dataPerFold
-            this.algorithm.success = foldsController.folds
+            this.success = foldsController.folds
                  
             let classes = new GetClasses(dataSet);
             this.classes = [...classes.classes]
             
             
-            this.repeatedCrossValidation(dataSet, this.dataTest.getDataArray, numberDataPerFold, numberOfFolds, this.kMax);
+            this.repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, this.kMax);
             
             
-            let chartUpdate = new ChartController({percentages : this.algorithm.percentages, kMax : this.kMax})
+            let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax})
             text.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
         }; 
      };
