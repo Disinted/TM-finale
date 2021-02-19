@@ -7,11 +7,6 @@ class Controller{
         this.success = [];
         this.percentages = [];
         this.kMax = undefined;
-        this.algorithm = {
-            success : [],
-            percentages : [],
-        };
-
 
     };
 
