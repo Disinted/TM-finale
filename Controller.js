@@ -248,12 +248,12 @@ class Controller{
     /*start() --> None
     corps principal du programme*/ 
     start(){
-        let text = new TextController()
+        let textController = new HtmlTextController()
         if ( this.data == undefined){
-            text.baseText = "Vous avez oublié de charger le dataSet."
+            textController.baseText = "Vous avez oublié de charger le dataSet."
         }
         else {
-            text.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
+            textController.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
             let dataSet = this.data.data
             let dataTest = []
             this.kMax = this.findKMax(dataSet);
@@ -272,8 +272,14 @@ class Controller{
             this.repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, this.kMax);
             
             
-            let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax})
-            text.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
+            let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax, textController : textController})
+            textController.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
+            let formController = new FormController
         }; 
-     };
+    };
+    
+    form(){
+        let value = document.querySelector('input[name="option1"]:checked').value //prend la valeur de l'input qui a comme nom "option1" et qui est selectionné par l'utilisateur 
+        console.log(value)
+    };
 };

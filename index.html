@@ -11,8 +11,9 @@
     <script src="shuffleArray.js"></script> <!-- Mélange de données sur le principe de l'algorithme de mélange de Fisher Yates -->
     <script src="getClasses.js"></script> <!-- Récupération des différentes catégories du dataSet donné -->
     <script src="chartController.js"></script> <!-- Script affichant le graphe à l'utilisateur -->
-    <script src="textController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
+    <script src="htmlTextController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
     <script src="foldsController.js"></script> <!-- Script permettant de séparer les données en 10/11 parties ( 10/11k fold crossvalidation )-->
+    <script src="formController.js"></script> <!-- Script qui permet d'afficher et de récupérer les données du formulaire -->
     <link rel="stylesheet" href="style.css">
     <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -55,11 +56,11 @@
             
         </div>
         
-        <div class="card-body" id="interface">
-          </div>
-          <div class="card-body">
-            <p id="bestK"></p>
-        </div>
+        <p id="interface-place" hidden></p>
+        <p id="bestKTextPlace" hidden></p>
+        <p id="form-place" hidden></p>
+
+
     </div>
   </div>
 

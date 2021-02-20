@@ -6,17 +6,11 @@ class ChartController{
         };
         this.chartAndTextUpdate()      
     }
-    //mettre le getElementById avec des attributs d'instance ne fonctionne pas.
-
-    set canvas(htmlCanvas){
-        document.getElementById('interface').innerHTML = htmlCanvas;
-    }
-
 
     /*chartAndTextUpdate()--> none
     Permets d'afficher le graphe dans la page html et de mettre à jour le texte*/
-    chartAndTextUpdate(){     
-        this.canvas = '<canvas id="myChart"></canvas>'; //création canvas pour le graphe  
+    chartAndTextUpdate(){ 
+        this.params.textController.canvas = '<canvas id="myChart"></canvas>'; //création canvas pour le graphe  
         Chart.defaults.scale.ticks.beginAtZero = true;
         var ctx = document.getElementById('myChart').getContext('2d');
         var chart = new Chart(ctx, {
