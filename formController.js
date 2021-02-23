@@ -17,7 +17,8 @@ class FormController{
         this._numberOfQuestions = questions.length
         console.log(questions.length, this._numberOfQuestions)
         
-        for ( let i = 0; i < questions.length; i++){ 
+        for ( let i = 0; i < questions.length; i++){
+            htmlTextToAdd += '<h2 class="mb-3">'+questions[i]+'</h2>'
             for ( let j = 0; j < possibleAnswers[i].length; j++){ //Certaines questions peuvent avoir plus ou moins de réponses possibles que d'autres
                 
                 htmlTextToAdd += '<div class="radio"><label><input type="radio" name="option'+i+'" value="'+answersValue[i][j]+'">'+possibleAnswers[i][j]+'</label></div>'
