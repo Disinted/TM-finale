@@ -108,7 +108,7 @@ class Controller{
         for ( let i = 0; i < numberOfInformation; i++){
             distanceMax.push(highestArray[i]-shortestArray[i])
         }
-        
+        console.log(distanceMax)
         return distanceMax
         
     }
@@ -274,12 +274,23 @@ class Controller{
             
             let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax, textController : textController})
             textController.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
-            let formController = new FormController
+            this.formController = new FormController()
         }; 
     };
     
     form(){
-        let value = document.querySelector('input[name="option1"]:checked').value //prend la valeur de l'input qui a comme nom "option1" et qui est selectionné par l'utilisateur 
-        console.log(value)
+        // let value = document.querySelector('input[name="option1"]:checked').value --> prend la valeur de l'input qui a comme nom "option1" et qui est selectionné par l'utilisateur 
+        let answers = []
+        for (let i = 0; i < this.formController.numberOfQuestions; i++){
+            let value = document.querySelector('input[name="option'+i+'"]:checked').value
+            answers.push(value)
+        }
+        console.log(answers)
+        let dataSet = this.data.data;
+        let nearest = this.getKnn(dataSet, answers, this.bestKValue(), this.getDistanceMax())
+        console.log(nearest)
+        let bestChoice = String(this.arrayToClass(nearest, this.classes))
+        console.log(bestChoice)
+
     };
 };
