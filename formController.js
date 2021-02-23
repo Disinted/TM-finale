@@ -36,6 +36,9 @@ class FormController{
 
 /* code html pour le formulaire ( de manière lisible ) d'exemple
 <div class="card-body">
+    <h2 class="mb-3">
+        votre âge ?
+    </h2>
     <div class="radio">
         <label>
             <input type="radio" name="option1" value="30">
@@ -48,6 +51,9 @@ class FormController{
             35
         </label>
     </div>
+    <h2 class="mb-3">
+        votre revenu ?
+    </h2>
     <div class="radio">
         <label>
             <input type="radio" name="option2" value="2500">
