@@ -16,7 +16,7 @@ class Controller{
     Récupération des données*/
     getDataSet(file){
 
-        this.data = new GetDataSet(file.files);
+        this.data = new DataController(file.files);
             document.getElementById("labelSet").innerHTML = "dataset chargé !";
     };
 
@@ -80,23 +80,24 @@ class Controller{
     Permet de trouver la distance maximale entre deux données données. Calculé dans le controller pour éviter de calculer plusieurs fois les distances.
     */
     getDistanceMax(){
-        let numberOfInformation = this.data.data[0].length - 1 //[0,1,2,cluster] --> 3 informations
+        let dataSet = this.data.data
+        let numberOfInformation = dataSet[0].length - 1 //[0,1,2,cluster] --> 3 informations
         let shortestArray = [];
         let highestArray = [];
         let distanceMax = []
-
+        
         
         for (let i = 0; i < numberOfInformation ; i++){ //[0,1,2] index des info
-            shortestArray[i] = Number(this.data.data[0][i])
-            highestArray[i] = Number(this.data.data[0][i])
-            for (let j = 1; j < this.data.data.length; j++){ //dataSet [1,2,3,cluster]
+            shortestArray[i] = Number(dataSet[0][i])
+            highestArray[i] = Number(dataSet[0][i])
+            for (let j = 1; j < dataSet.length; j++){ //dataSet [1,2,3,cluster]
 
-                if ( Number(this.data.data[j][i]) < shortestArray[i]){
-                    shortestArray[i] = Number(this.data.data[j][i])
+                if ( Number(dataSet[j][i]) < shortestArray[i]){
+                    shortestArray[i] = Number(dataSet[j][i])
                    
                 }
-                else if ( Number(this.data.data[j][i]) > highestArray[i]){
-                    highestArray[i] = Number(this.data.data[j][i])
+                else if ( Number(dataSet[j][i]) > highestArray[i]){
+                    highestArray[i] = Number(dataSet[j][i])
                  
                 }
 
@@ -209,30 +210,35 @@ class Controller{
 
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
-    crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax){
-        let shuffledData = new ShuffleArray(dataSet);
+    crossvalidation(numberDataPerFold, numberOfFolds, kMax, distMax){
+        /*let shuffledData = new ShuffleArray(dataSet);
         dataSet = shuffledData.shuffledArray
-        console.log(dataSet[0], this.success)
+        this.data.data = dataSet*/
+        this.data.shuffleArray()
         let index = 0;
-        
+        let dataSet;
+        let dataTest;
         for(let i = 0; i < numberOfFolds; i++){
             if( i == 10 ){
-                this.getDataTest(dataSet, dataTest, dataSet.length%10, index); //Si les données ne peuvent pas être divié par 10 (ex: 158 --> 158%10 = 8, un 11ème fold a déja été créer si il y a un reste et pour que toutes les données soient testées )
-                
+                //this.getDataTest(dataSet, dataTest, dataSet.length%10, index); //Si les données ne peuvent pas être divié par 10 (ex: 158 --> 158%10 = 8, un 11ème fold a déja été créer si il y a un reste et pour que toutes les données soient testées )
+                this.data.getDataTest(this.data.data.length%10, index)
             } else {
-                this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
+                //this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
+                this.data.getDataTest(numberDataPerFold, index)
             };
+            dataSet = this.data.dataSet;
+            dataTest = this.data.dataTest;
             this.getSuccess(i, this.success, dataTest, dataSet, kMax, distMax);
             
-            this.resetData(dataSet, dataTest, index);
+            this.data.resetData();
             index+=numberDataPerFold;
         };
     };
     
-    repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax){
+    repeatedCrossValidation(numberDataPerFold, numberOfFolds, kMax){
         let distMax = this.getDistanceMax()
         for ( let i = 0; i < 10; i++){
-        this.crossvalidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, kMax, distMax);
+        this.crossvalidation(numberDataPerFold, numberOfFolds, kMax, distMax);
         }
         this.getPercent(numberOfFolds, numberDataPerFold, this.success, kMax);
     }
@@ -255,9 +261,8 @@ class Controller{
         else {
             textController.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
             let dataSet = this.data.data
-            let dataTest = []
             this.kMax = this.findKMax(dataSet);
-
+            
             this.reset();
 
             let foldsController = new FoldsController(dataSet, this.kMax )
@@ -269,7 +274,7 @@ class Controller{
             this.classes = [...classes.classes]
             
             
-            this.repeatedCrossValidation(dataSet, dataTest, numberDataPerFold, numberOfFolds, this.kMax);
+            this.repeatedCrossValidation(numberDataPerFold, numberOfFolds, this.kMax);
             
             
             let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax, textController : textController})

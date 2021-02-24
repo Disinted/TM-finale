@@ -18,7 +18,7 @@ class FormController{
         console.log(questions.length, this._numberOfQuestions)
         
         for ( let i = 0; i < questions.length; i++){
-            htmlTextToAdd += '<h2 class="mb-3">'+questions[i]+'</h2>'
+            htmlTextToAdd += '<p id = "formQuestions">'+questions[i]+'</p>'
             for ( let j = 0; j < possibleAnswers[i].length; j++){ //Certaines questions peuvent avoir plus ou moins de réponses possibles que d'autres
                 
                 htmlTextToAdd += '<div class="radio"><label><input type="radio" name="option'+i+'" value="'+answersValue[i][j]+'">'+possibleAnswers[i][j]+'</label></div>'
@@ -27,18 +27,19 @@ class FormController{
         };
         htmlTextToAdd += '<button type="input"  class="btn btn-warning" onclick="bestKFinder.form()" >Submit</button></div>'
 
-        console.log (htmlTextToAdd)
+
         let textController = new HtmlTextController
-        textController.form = htmlTextToAdd 
+        textController.form = htmlTextToAdd;
+
        
     };
 };
 
 /* code html pour le formulaire ( de manière lisible ) d'exemple
 <div class="card-body">
-    <h2 class="mb-3">
+    <p id = "formQuestions" >
         votre âge ?
-    </h2>
+    </p>
     <div class="radio">
         <label>
             <input type="radio" name="option1" value="30">
@@ -51,9 +52,9 @@ class FormController{
             35
         </label>
     </div>
-    <h2 class="mb-3">
+    <p id = "formQuestions">
         votre revenu ?
-    </h2>
+    </p>
     <div class="radio">
         <label>
             <input type="radio" name="option2" value="2500">
