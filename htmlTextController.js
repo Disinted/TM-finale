@@ -2,6 +2,10 @@ class HtmlTextController{
     constructor(){
     }
     //mettre le getElementById avec des attributs d'instance ne fonctionne pas.
+    set chargedDataSet(texte){
+        document.getElementById("labelSet").innerHTML = texte
+    }
+
     set baseText(texte){
         document.getElementById("baseText").innerHTML = texte
     }

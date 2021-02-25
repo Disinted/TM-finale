@@ -17,7 +17,9 @@ class Controller{
     getDataSet(file){
 
         this.data = new DataController(file.files);
-            document.getElementById("labelSet").innerHTML = "dataset chargé !";
+        let htmlText = new HtmlTextController()
+
+            htmlText.chargedDataSet = "dataset chargé !";
     };
 
 
@@ -294,7 +296,7 @@ class Controller{
         let dataSet = this.data.data;
         let nearest = this.getKnn(dataSet, answers, this.bestKValue(), this.getDistanceMax())
         console.log(nearest)
-        let bestChoice = String(this.arrayToClass(nearest, this.classes))
+        let bestChoice = this.arrayToClass(nearest, this.classes)
         console.log(bestChoice)
 
     };
