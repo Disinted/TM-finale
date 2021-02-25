@@ -19,7 +19,7 @@ class Controller{
         this.data = new DataController(file.files);
         let htmlText = new HtmlTextController()
 
-            htmlText.chargedDataSet = "dataset chargé !";
+            htmlText = "dataset chargé !";
     };
 
 
