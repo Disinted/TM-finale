@@ -70,7 +70,7 @@ class ChartController {
     let scatterChartInfo = [];
     classes.forEach(function (OS) {
       let OSDatas = [];
-      let OSobject = { name: OS };
+      let OSobject = { name: OS }; //besoin que ce soit sous forme d'objet pour le graphe
       dataSet.forEach(function (data) {
         //mettre dans OSDatas les données des personnes appartenant à une certaine OS
         if (data[data.length - 1] == OS) {
@@ -86,8 +86,9 @@ class ChartController {
       OSobject.data = dataPoints;
       scatterChartInfo.push(OSobject);
     });
-    console.log(scatterChartInfo);
+
     let options = {
+      //pour le graphe
       series: scatterChartInfo,
       chart: {
         height: "auto",
