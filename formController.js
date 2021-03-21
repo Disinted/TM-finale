@@ -1,5 +1,6 @@
 class FormController{
-    constructor(){
+    constructor(array){
+        this.questionsData = array
         this._result = [];
         this._numberOfQuestions = 0
         this.formCreation()
@@ -9,29 +10,56 @@ class FormController{
         return this._numberOfQuestions
     }
     formCreation(){
+        let textController = new HtmlTextController()
         let htmlTextToAdd = '<div class="card-body">'
         //ajouter autant de questions / réponses possibles / valeur de la réponse qu'on le souhaite
-        let questions = ["votre âge ?", "votre revenu ?", "votre sexe ?"]
-        let possibleAnswers = [[30,35,40],[4500,4300,3900],["homme", "Femme"]] //un [] = un set de réponses possibles pour une question
-        let answersValue = [[30,35,40], [4500,4300,3900], [0,1]] //même que possibleAnswers mais pour la valeur de retour
-        this._numberOfQuestions = questions.length
-        console.log(questions.length, this._numberOfQuestions)
         
+        let questions = [] 
+        let possibleAnswers = [] 
+        let answersValue = [] 
+        
+        let questionsData = [...this.questionsData]
+        console.log(questionsData)
+        for ( let j = 0; j < 3; j++){
+            let i = 0
+            i+=j
+            let typeOfValue = [questions, possibleAnswers, answersValue]
+            
+            do{
+                typeOfValue[j].push(questionsData[i]);
+                i+=3
+            } while( i < questionsData.length)
+        }
+
+        
+        this._numberOfQuestions = questions.length
+
+        htmlTextToAdd += '<div id = "formQuestions0">'+questions[0][0].substring(2,)+'</div>' //Pour éviter l'affichage du BOM au début (UTF-16)
+        let questionsID = ["formQuestions0"] //Pour appliquer un style css pour toute les questions par après ( avec .forEach )
         for ( let i = 0; i < questions.length; i++){
-            htmlTextToAdd += '<p id = "formQuestions">'+questions[i]+'</p>'
+            if ( i != 0 ){
+                htmlTextToAdd += '<div id = "formQuestions'+i+'">'+questions[i]+'</div>'
+                questionsID.push('formQuestions'+i)
+            }
+            
+            
             for ( let j = 0; j < possibleAnswers[i].length; j++){ //Certaines questions peuvent avoir plus ou moins de réponses possibles que d'autres
                 
-                htmlTextToAdd += '<div class="radio"><label><input type="radio" name="option'+i+'" value="'+answersValue[i][j]+'">'+possibleAnswers[i][j]+'</label></div>'
+                htmlTextToAdd += '<div class="radio"><label><input type="radio" name="option'+i+'" value="'+answersValue[i][j]+'" checked>'+possibleAnswers[i][j]+'</label></div>'
                 
             };
         };
         htmlTextToAdd += '<button type="input"  class="btn btn-warning" onclick="bestKFinder.form()" >Submit</button></div>'
 
-
-        let textController = new HtmlTextController
         textController.form = htmlTextToAdd;
+        
+        questionsID.forEach(function(id){
+            let questionsCSS = document.getElementById(id).style
+            questionsCSS.fontVariant = "small-caps"
+            questionsCSS.margin = "40px 0px 20px"
+            questionsCSS.fontSize = "x-large"
 
-       
+        })
     };
 };
 

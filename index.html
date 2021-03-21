@@ -1,64 +1,78 @@
 <!doctype html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Script contenant l'algorithme kNN -->
-    <script src="KNN.js"></script>
-    <!-- Script contenant ce qui permet les intéractions entre l'utilisateur et le programme + css  -->
-    <script src="Controller.js"></script>
-    <script src="DataController.js"></script> <!--Script permettant la récupération et gestion des données-->
-    <script src="shuffleArray.js"></script> <!-- Mélange de données sur le principe de l'algorithme de mélange de Fisher Yates -->
-    <script src="chartController.js"></script> <!-- Script affichant le graphe à l'utilisateur -->
-    <script src="htmlTextController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
-    <script src="foldsController.js"></script> <!-- Script permettant de séparer les données en 10/11 parties ( 10/11k fold crossvalidation )-->
-    <script src="formController.js"></script> <!-- Script qui permet d'afficher et de récupérer les données du formulaire -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    
-    <title>Meilleur k pour l'algorithme k-NN</title>
-  
+  <meta charset="utf-16">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Script contenant l'algorithme kNN -->
+  <script src="KNN.js"></script>
+  <script src="Controller.js"></script>
+  <!-- Script contenant ce qui permet les intéractions entre l'utilisateur et le programme + css  -->
+  <script src="DataController.js"></script>
+  <!--Script permettant la récupération et gestion des données-->
+  <script src="getClasses.js"></script> <!-- Récupération des différentes catégories du dataSet donné -->
+  <script src="chartController.js"></script> <!-- Script affichant le graphe à l'utilisateur -->
+  <script src="htmlTextController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
+  <script src="foldsController.js"></script>
+  <!-- Script permettant de séparer les données en 10/11 parties ( 10/11k fold crossvalidation )-->
+  <script src="formController.js"></script>
+  <!-- Script qui permet d'afficher et de récupérer les données du formulaire -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  </script>
+  <!-- deux bibliothèques js pour créer des graphes -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <!-- bibliothèque plus simple d'utilisation pour des graphes en "barre"-->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- bibliothèque plus simple d'utilisation pour des graphes type "nuage de points"-->
+  <title>Meilleur k pour l'algorithme k-NN</title>
+
 </head>
 
 <body class="bg-info py-5">
-    
-    <script>
-        let bestKFinder = new Controller();
-       
-    </script>
+
+  <script>
+    let bestKFinder = new Controller();
+    fetch("questionyeet.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.getDataSet(text) })
+    fetch("questions.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.stockQuestions(text) }).then(() => { bestKFinder.start() })
+
+  </script>
   <!-- mise en page avec l'utilisation de Bootstrap-->
-  <div class = "col-md-6 offset-md-3">
-    <div class = "card">
-        <div class = "card-body">
-            <h1>Meilleur k pour l'algorithme k-NN</h1>
-              
-                <div class="form-row">
-                  <div class="col">
-                    <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus approprié pour un certain dataset.
-                      K-NN est un algorithme relativement simple qui calcule la distance entre des données, et regroupe les k données les plus proche pour deviner à quelle catégorie il appartient 
-                      Vous aurez besoin d'un dataSet en format csv afin de voir si l'algorithme
-                      est capable de trouver la bonne catégorie. Le programme utilise le système de <a href=https://machinelearningmastery.com/repeated-k-fold-cross-validation-with-python>repeated-10k-fold-crossvalidation</a>
+  <div class="col-md-6 offset-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h1>Meilleur k pour l'algorithme k-NN</h1>
 
-                    </p>
-                    <div>
-                      <input type="file" class="inputfile" id="uploadfile1" onchange="bestKFinder.getDataSet(document.getElementById('uploadfile1'))"> <!-- bestKFinder.getDataSet(this, bestKFinder.dataSet) -->
-                      <label id="labelSet"  for="uploadfile1">Choisissez le fichier du dataSet</label>
-                    </div>                  
-                    <button type="input"  class="btn btn-warning" onclick="bestKFinder.start()" >Calcul</button>
-                  </div>
-                </div>
-              
-            
+        <div class="form-row">
+          <div class="col">
+            <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus
+              approprié pour un certain dataset.
+              K-NN est un algorithme relativement simple qui calcule la distance entre des données, et regroupe les k
+              données les plus proche pour deviner à quelle catégorie il appartient
+              Vous aurez besoin d'un dataSet en format csv afin de voir si l'algorithme
+              est capable de trouver la bonne catégorie. Le programme utilise le système de <a
+                href=https://machinelearningmastery.com/repeated-k-fold-cross-validation-with-python>repeated-10k-fold-crossvalidation</a>
+
+            </p>
+
+          </div>
         </div>
-        
-        <p id="interface-place" hidden></p>
-        <p id="bestKTextPlace" hidden></p>
-        <p id="form-place" hidden></p>
 
+
+      </div>
+
+      <p id="interface-place" hidden></p>
+      <p id="bestKTextPlace" hidden></p>
+      <p id="form-place" hidden></p>
+      <p id="chartBoi"></p>
 
     </div>
   </div>

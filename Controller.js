@@ -11,15 +11,10 @@ class Controller{
     };
 
 
-
     /*getDataSet(csv file) --> none
     Récupération des données*/
     getDataSet(file){
-
-        this.data = new DataController(file.files);
-        let htmlText = new HtmlTextController()
-
-            htmlText = "dataset chargé !";
+        this.data = new DataController(file.split("\n"));
     };
 
 
@@ -30,9 +25,9 @@ class Controller{
         return Math.floor(Math.sqrt(dataset.length));
     };
 
-    /*arrToClass(array arr, arr className) --> str
-    retourne la classe la plus représentée, ou "undefined" */
-    arrayToClass(arr, className){
+    /*arrToClass(array arr, arr className, boolean flag) --> array
+    retourne la classe la plus représentée, ou "undefined". Si flag = true => si plusieurs options ont un nombre égal de représentations, permet de les afficher tous */
+    arrayToClass(arr, className, flag){
         
         let compare= [];
         for(let p = 0; p<className.length;p++){
@@ -65,15 +60,29 @@ class Controller{
         };
         
 
-        if(1 == numberOfOccurence(compare, highestNumber))
-
-        {
+        if(1 == numberOfOccurence(compare, highestNumber) && flag != true){
 
             return className[compare.indexOf(highestNumber)];
         }
 
+        else if ( 1 == numberOfOccurence(compare, highestNumber) && flag == true){
+            return [className[compare.indexOf(highestNumber)]]
+        }
+
+        else if (1 != numberOfOccurence(compare, highestNumber) && flag == true){ //Pour le conseil final après le questionnaire, en cas de conflit de choix ( exemple : 1OS BIC, 4OS espagnol, 4OS Grec -> retourner les OS espagnol et grec)
+            let i = 0
+            let numberOfOccurences = numberOfOccurence(compare, highestNumber)
+            let classes = []
+            while ( numberOfOccurences > i){
+                classes.push(className[compare.indexOf(highestNumber)])
+                compare[compare.indexOf(highestNumber)] = 0
+                i+=1
+            }
+            return classes
+        }
         else  {
             
+
             return "undefined" ;
         };
     };
@@ -130,7 +139,7 @@ class Controller{
     /*getSuccess(int fold, array success, array dataTest, array dataSet, int kMax, array distMax) --> None
     Permets de stocker dans un objet global le nombre de bonnes prédictions par l'algorithme par valeur de k*/
     getSuccess(fold, success, dataTest, dataSet, kMax, distMax){
-        console.log(success)
+        
         for ( let i = 0; i < dataTest.length; i++){  
             let nearest =  this.getKnn(dataSet, dataTest[i], kMax, distMax );
             for(let k = 0; k < kMax ; k++){
@@ -213,10 +222,8 @@ class Controller{
     /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
     estimation de la fiabilité du programme*/
     crossvalidation(numberDataPerFold, numberOfFolds, kMax, distMax){
-        /*let shuffledData = new ShuffleArray(dataSet);
-        dataSet = shuffledData.shuffledArray
-        this.data.data = dataSet*/
-        this.data.shuffleArray()
+
+        this.data.arrayShuffle()
         let index = 0;
         let dataSet;
         let dataTest;
@@ -257,36 +264,39 @@ class Controller{
     corps principal du programme*/ 
     start(){
         let textController = new HtmlTextController()
-        if ( this.data == undefined){
-            textController.baseText = "Vous avez oublié de charger le dataSet."
-        }
-        else {
-            textController.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur d ek proposée soit constamment la meilleur à choisir.";
-            let dataSet = this.data.data
-            this.kMax = this.findKMax(dataSet);
-            
-            this.reset();
 
-            let foldsController = new FoldsController(dataSet, this.kMax )
-            let numberOfFolds = foldsController.numberOfFolds
-            let numberDataPerFold = foldsController.dataPerFold
-            this.success = foldsController.folds
+        textController.baseText = "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur proposée soit constamment la meilleur à choisir.";
+        let dataSet = this.data.data
+        this.kMax = Math.floor(Math.sqrt(dataSet.length));
+            
+        this.reset();
+
+        let foldsController = new FoldsController(dataSet, this.kMax )
+        let numberOfFolds = foldsController.numberOfFolds
+        let numberDataPerFold = foldsController.dataPerFold
+        this.success = foldsController.folds
                  
-            let classes = new GetClasses(dataSet);
-            this.classes = [...classes.classes]
+        let classes = new GetClasses(dataSet);
+        this.classes = [...classes.classes]
             
             
-            this.repeatedCrossValidation(numberDataPerFold, numberOfFolds, this.kMax);
+        this.repeatedCrossValidation(numberDataPerFold, numberOfFolds, this.kMax);
+        
             
-            
-            let chartUpdate = new ChartController({percentages : this.percentages, kMax : this.kMax, textController : textController})
-            textController.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
-            this.formController = new FormController()
-        }; 
+        new ChartController({percentages : this.percentages, kMax : this.kMax, textController : textController, classes : this.classes, dataSet : dataSet})
+        textController.bestK = "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue())
+        this.formController = new FormController(this.questions.data)
+        
+         
     };
+
+    stockQuestions(file){
+        this.questions = new DataController(file.split("\n"))
+    }
     
     form(){
         // let value = document.querySelector('input[name="option1"]:checked').value --> prend la valeur de l'input qui a comme nom "option1" et qui est selectionné par l'utilisateur 
+        // cette partie ira dans le fichier "formController.js" quand tout sera correctement fonctionnel et sans bug
         let answers = []
         for (let i = 0; i < this.formController.numberOfQuestions; i++){
             let value = document.querySelector('input[name="option'+i+'"]:checked').value
@@ -296,7 +306,7 @@ class Controller{
         let dataSet = this.data.data;
         let nearest = this.getKnn(dataSet, answers, this.bestKValue(), this.getDistanceMax())
         console.log(nearest)
-        let bestChoice = this.arrayToClass(nearest, this.classes)
+        let bestChoice = this.arrayToClass(nearest, this.classes, true)
         console.log(bestChoice)
 
     };

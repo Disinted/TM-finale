@@ -6,15 +6,11 @@ class DataController {
         this._data = [];
         this._dataSet = []
         this._dataTest = []
-        this.getDataSet(this._data)
+        this.getDataSet(this._file)
     }
 
     get data(){
         return [...this._data]
-    }
-
-    set data(dataArray){
-        this._data = [...dataArray]
     }
     
     get dataSet(){
@@ -27,32 +23,17 @@ class DataController {
 
     /* getDataSet(object data) --> none
         enregistre dans un attribut d'instance les données sous forme de tableau de tableaux [[...], [...], [...]]*/
-    getDataSet(data){
-        //récupération des csv
-        
-        
-        if (this._file && this._file[0]){
-        let reader = new FileReader();
-        reader.readAsBinaryString(this._file[0]);
-        reader.onload = function (e) {        
-            let dataFile = e.target.result;  
-            let rawData = dataFile.split("\n");
-            
-            
-            
-            for ( let x = 0; x < rawData.length; x++){
-                data.push(rawData[x].split(","));
-                console.log(x, rawData[x].split(","))
-                
-                };
-            };
-        };
+    getDataSet(file){
+        for (let i = 0; i<file.length;i++){
+            this._data.push(file[i].split(","))
+        }
         console.log(this._data)
+        
     };
     /*getDataTest(array dataArray, array dataTestArray) --> none
     Permets de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/   
     getDataTest( numberOfData, index ){
-        let dataArray = [...this.data]
+        let dataArray = this.data
         let dataTestArray = []
         let arrayTest = dataArray.slice(index,numberOfData+index);
         
@@ -80,6 +61,22 @@ class DataController {
         let shuffledDataSet = shuffledData.shuffledArray
         this._data = [...shuffledDataSet]
         console.log(this._data[0])
+
     }
-        
+
+    /* arrayShuffle() --> none
+    permet de mélanger le dataSet ( algorithme mélange de Fisher-Yates ) */
+    arrayShuffle(){
+        let dataArray = [...this._data];
+        for( let i = dataArray.length - 1; i > 0; i--){
+            let j = Math.floor(Math.random()*(i+1));
+            let actualElement = dataArray[i];
+            dataArray[i] = dataArray[j];
+            dataArray[j] = actualElement;
+        };
+        this._data = dataArray
+        console.log(this._data[0])
+    };
+
+
 }
