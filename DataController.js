@@ -29,6 +29,7 @@ class DataController {
     }
     console.log(this._data);
   }
+
   /*getDataTest(array dataArray, array dataTestArray) --> none
     Permets de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
   getDataTest(numberOfData, index) {

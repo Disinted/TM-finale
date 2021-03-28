@@ -24,4 +24,15 @@ class HtmlTextController {
     document.getElementById("form-place").innerHTML = htmlForm;
     document.getElementById("form-place").hidden = false;
   }
+  set bestOption(option) {
+    document.getElementById("form-place").innerHTML =
+      "<p class='text-center'  id='bestOption'> Le programme vous recommende de choisir l'option " +
+      option +
+      "</p> <div class='text-center'><button type='input'  class='btn btn-warning' onclick='bestKFinder.resetForm()' >Refaire le questionnaire</button></div>";
+  }
+
+  set barCharts(questionNumber) {
+    document.getElementById("chartBoi2").innerHTML +=
+      "<div id='chart" + questionNumber + "'>" + questionNumber + "</div>";
+  }
 }

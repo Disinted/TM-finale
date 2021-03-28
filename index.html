@@ -16,6 +16,7 @@
   <script src="foldsController.js"></script>
   <!-- Script permettant de séparer les données en 10/11 parties ( 10/11k fold crossvalidation )-->
   <script src="formController.js"></script>
+  <script src="KMean.js"></script>
   <!-- Script qui permet d'afficher et de récupérer les données du formulaire -->
   <link rel="stylesheet" href="style.css">
   <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
@@ -41,7 +42,7 @@
 
   <script>
     let bestKFinder = new Controller();
-    fetch("questionyeet.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.getDataSet(text) })
+    fetch("questions2.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.getDataSet(text) })
     fetch("questions.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.stockQuestions(text) }).then(() => { bestKFinder.start() })
 
   </script>
@@ -68,11 +69,12 @@
 
 
       </div>
-
+      <p id="chartBoi"></p>
+      <p id="chartBoi2"></p>
       <p id="interface-place" hidden></p>
       <p id="bestKTextPlace" hidden></p>
       <p id="form-place" hidden></p>
-      <p id="chartBoi"></p>
+
 
     </div>
   </div>

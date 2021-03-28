@@ -218,9 +218,9 @@ class Controller {
   /*start() --> None
     corps principal du programme*/
   start() {
-    let textController = new HtmlTextController();
+    this.textController = new HtmlTextController();
 
-    textController.baseText =
+    this.textController.baseText =
       "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur proposée soit constamment la meilleur à choisir.";
     let dataSet = this.data.data;
     this.kMax = Math.floor(Math.sqrt(dataSet.length));
@@ -240,13 +240,16 @@ class Controller {
     new ChartController({
       percentages: this.percentages,
       kMax: this.kMax,
-      textController: textController,
+      textController: this.textController,
       classes: this.classes,
       dataSet: dataSet,
+      kMean: new KMean(dataSet, this.classes),
     });
-    textController.bestK =
+    this.textController.bestK =
       "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue());
     this.formController = new FormController(this.questions.data);
+
+    //Pour le Kmean algorithm
   }
 
   stockQuestions(file) {
@@ -255,7 +258,6 @@ class Controller {
 
   form() {
     // let value = document.querySelector('input[name="option1"]:checked').value --> prend la valeur de l'input qui a comme nom "option1" et qui est selectionné par l'utilisateur
-    // cette partie ira dans le fichier "formController.js" quand tout sera correctement fonctionnel et sans bug
     let answers = [];
     for (let i = 0; i < this.formController.numberOfQuestions; i++) {
       let value = document.querySelector(
@@ -271,8 +273,31 @@ class Controller {
       this.bestKValue(),
       this.getDistanceMax()
     );
-    console.log(nearest);
-    let bestChoice = this.arrayToClass(nearest, this.classes, true);
+    nearest.forEach((v) => {
+      console.log(v[v.length - 1]);
+    });
+    let possibleChoices = this.arrayToClass(nearest, this.classes, true);
+    let bestChoice = "";
+    console.log(possibleChoices);
+    if (possibleChoices.length > 1) {
+      let text = "";
+      possibleChoices.forEach((OS) => {
+        text += OS + " ou ";
+      });
+      bestChoice += text
+        .substr(0, text.length - 5 /* -5 pour enlever le " ou " final */)
+        .toLowerCase();
+      console.log(text, bestChoice);
+    } else {
+      bestChoice = possibleChoices[0].toLowerCase();
+    }
+    this.textController.bestOption = bestChoice;
+    document.getElementById("bestOption").style.textDecoration = "underline";
+    document.getElementById("bestOption").style.fontSize = "large";
     console.log(bestChoice);
+  }
+
+  resetForm() {
+    this.textController.form = this.formController.formHTML;
   }
 }

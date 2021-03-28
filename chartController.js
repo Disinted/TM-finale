@@ -6,6 +6,7 @@ class ChartController {
     }
     this.chartAndTextUpdate();
     this.scatterChart();
+    this.meanChart();
   }
 
   /*chartAndTextUpdate()--> none
@@ -68,7 +69,9 @@ class ChartController {
     let dataSet = [...this.params.dataSet];
     let classes = [...this.params.classes];
     let scatterChartInfo = [];
+
     classes.forEach(function (OS) {
+      //pour le graphe en nuage de points
       let OSDatas = [];
       let OSobject = { name: OS }; //besoin que ce soit sous forme d'objet pour le graphe
       dataSet.forEach(function (data) {
@@ -83,6 +86,7 @@ class ChartController {
           dataPoints.push([i + 1, data[i]]);
         }
       });
+      console.log(dataPoints);
       OSobject.data = dataPoints;
       scatterChartInfo.push(OSobject);
     });
@@ -107,7 +111,42 @@ class ChartController {
         tickAmount: 6,
       },
     };
-    console.log(options);
+
+    //let chart = new ApexCharts(document.querySelector("#chartBoi"), options);
+    //chart.render();
+  }
+
+  meanChart() {
+    let meansPerOS = this.params.kMean.means;
+    let meanChartInfos = [];
+    meansPerOS.forEach((dataArray) => {
+      let objectForChart = { name: dataArray[dataArray.length - 1] };
+
+      objectForChart.data = dataArray.slice(0, dataArray.length - 1);
+      console.log(objectForChart);
+      meanChartInfos.push(objectForChart);
+    });
+
+    console.log(meanChartInfos);
+    let options = {
+      //pour le graphe
+      series: meanChartInfos,
+      chart: {
+        height: "auto",
+        type: "scatter",
+        zoom: {
+          enabled: true,
+          type: "xy",
+        },
+      },
+
+      xaxis: {
+        tickAmount: 30,
+      },
+      yaxis: {
+        tickAmount: 6,
+      },
+    };
     let chart = new ApexCharts(document.querySelector("#chartBoi"), options);
     chart.render();
   }

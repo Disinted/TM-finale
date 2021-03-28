@@ -8,9 +8,13 @@ class FormController {
   get numberOfQuestions() {
     return this._numberOfQuestions;
   }
+  get formHTML() {
+    return this.htmlTextToAdd;
+  }
   formCreation() {
     let textController = new HtmlTextController();
-    let htmlTextToAdd = '<div class="card-body">';
+    this.htmlTextToAdd = '<div class="card-body">';
+
     //ajouter autant de questions / réponses possibles / valeur de la réponse qu'on le souhaite
 
     let questions = [];
@@ -18,7 +22,7 @@ class FormController {
     let answersValue = [];
 
     let questionsData = [...this.questionsData];
-    console.log(questionsData);
+
     for (let j = 0; j < 3; j++) {
       let i = 0;
       i += j;
@@ -32,12 +36,12 @@ class FormController {
 
     this._numberOfQuestions = questions.length;
 
-    htmlTextToAdd +=
+    this.htmlTextToAdd +=
       '<div id = "formQuestions0">' + questions[0][0].substring(2) + "</div>"; //Pour éviter l'affichage du BOM au début (UTF-16)
     let questionsID = ["formQuestions0"]; //Pour appliquer un style css pour toute les questions par après ( avec .forEach )
     for (let i = 0; i < questions.length; i++) {
       if (i != 0) {
-        htmlTextToAdd +=
+        this.htmlTextToAdd +=
           '<div id = "formQuestions' + i + '">' + questions[i] + "</div>";
         questionsID.push("formQuestions" + i);
       }
@@ -45,7 +49,7 @@ class FormController {
       for (let j = 0; j < possibleAnswers[i].length; j++) {
         //Certaines questions peuvent avoir plus ou moins de réponses possibles que d'autres
 
-        htmlTextToAdd +=
+        this.htmlTextToAdd +=
           '<div class="radio"><label><input type="radio" name="option' +
           i +
           '" value="' +
@@ -55,10 +59,10 @@ class FormController {
           "</label></div>";
       }
     }
-    htmlTextToAdd +=
-      '<button type="input"  class="btn btn-warning" onclick="bestKFinder.form()" >Submit</button></div>';
+    this.htmlTextToAdd +=
+      '<button type="input"  class="btn btn-warning" onclick="bestKFinder.form()" >Soummettre les réponses</button></div>';
 
-    textController.form = htmlTextToAdd;
+    textController.form = this.htmlTextToAdd;
 
     questionsID.forEach(function (id) {
       let questionsCSS = document.getElementById(id).style;
