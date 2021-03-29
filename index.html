@@ -5,22 +5,24 @@
 <head>
   <meta charset="utf-16">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- Script contenant l'algorithme kNN -->
+
   <script src="KNN.js"></script>
+  <!-- Script contenant l'algorithme kNN -->
   <script src="Controller.js"></script>
   <!-- Script contenant ce qui permet les intéractions entre l'utilisateur et le programme + css  -->
   <script src="DataController.js"></script>
   <!--Script permettant la récupération et gestion des données-->
   <script src="GetClasses.js"></script> <!-- Récupération des différentes catégories du dataSet donné -->
-  <script src="ChartController.js"></script> <!-- Script affichant le graphe à l'utilisateur -->
+  <script src="ChartController.js"></script> <!-- Script créeant les graphes -->
   <script src="HtmlTextController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
   <script src="FoldsController.js"></script>
   <!-- Script permettant de séparer les données en 10/11 parties ( 10/11k fold crossvalidation )-->
   <script src="FormController.js"></script>
+  <!-- Script permettant la création du formulaire -->
   <script src="Mean.js"></script>
-  <!-- Script qui permet d'afficher et de récupérer les données du formulaire -->
+  <!-- Script contenant une autre manière de recommander en utilisant les moyennes -->
   <link rel="stylesheet" href="style.css">
-  <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
+  <!-- Bootstrap CSS : les trois modules sont nécessaires pour le bon fonctionnement complet de bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -32,9 +34,9 @@
   </script>
   <!-- deux bibliothèques js pour créer des graphes -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-  <!-- bibliothèque plus simple d'utilisation pour des graphes en "barre"-->
+  <!-- bibliothèque utilisé pour le graphe en relation avec kNN"-->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <!-- bibliothèque plus simple d'utilisation pour des graphes type "nuage de points"-->
+  <!-- bibliothèque utilisé pour le graphe en rapport avec les moyennes -->
   <title>Recommandation OS</title>
 
 </head>
@@ -42,6 +44,7 @@
 <body class="bg-info py-5">
 
   <script>
+    //initiation du programme / recuperation des donnees necessaire pour le fonctionnement du programme
     let OSRecommender = new Controller();
     fetch("dataSetOS.csv").then((file) => { return file.text() }).then((text) => { OSRecommender.getDataSet(text) })
     fetch("questionsOS.csv").then((file) => { return file.text() }).then((text) => { OSRecommender.stockQuestions(text) }).then(() => { OSRecommender.start() })
@@ -64,7 +67,8 @@
       <p id="meanChart" hidden>
       <div class="card-body" id="chartCanvas" hidden>
         <p id="chartText" hidden> Voici ci-dessus un graphe montrant d'après la distance calculée par rapport aux
-          moyennes des réponses par OS et vos réponses, votre affinité par option dans l'ordre décroissant.</p>
+          moyennes des réponses par OS et vos réponses, votre affinité par option dans l'ordre décroissant.
+        </p>
         </p>
       </div>
       <p id="textForMeanChart" hidden></p>
