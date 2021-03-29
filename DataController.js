@@ -27,7 +27,6 @@ class DataController {
     for (let i = 0; i < file.length; i++) {
       this._data.push(file[i].split(","));
     }
-    console.log(this._data);
   }
 
   /*getDataTest(array dataArray, array dataTestArray) --> none
@@ -64,6 +63,5 @@ class DataController {
       dataArray[j] = actualElement;
     }
     this._data = dataArray;
-    console.log(this._data[0]);
   }
 }

@@ -3,6 +3,7 @@ class HtmlTextController {
   //mettre le getElementById avec des attributs d'instance ne fonctionne pas.
 
   set baseText(texte) {
+    document.getElementById("baseText").classList.remove("text-center");
     document.getElementById("baseText").innerHTML = texte;
   }
 
@@ -29,10 +30,5 @@ class HtmlTextController {
       "<p class='text-center'  id='bestOption'> Le programme vous recommende de choisir l'option " +
       option +
       "</p> <div class='text-center'><button type='input'  class='btn btn-warning' onclick='bestKFinder.resetForm()' >Refaire le questionnaire</button></div>";
-  }
-
-  set barCharts(questionNumber) {
-    document.getElementById("chartBoi2").innerHTML +=
-      "<div id='chart" + questionNumber + "'>" + questionNumber + "</div>";
   }
 }

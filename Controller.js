@@ -2,24 +2,18 @@ class Controller {
   constructor() {
     this.classes = [];
     this.success = [];
-    this.percentages = [];
+    this.kNNPercentages = [];
     this.kMax = undefined;
   }
 
   /*getDataSet(csv file) --> none
-    Récupération des données*/
+    Recuperation des donnees*/
   getDataSet(file) {
     this.data = new DataController(file.split("\n"));
   }
 
-  /*findKMax(array dataset) --> none
-    Détermine la valeur maximale de k auquel le programme aurait du sens. Calculé dans le controller pour éviter de calculer plusieurs fois.*/
-  findKMax(dataset) {
-    return Math.floor(Math.sqrt(dataset.length));
-  }
-
-  /*arrToClass(array arr, arr className, boolean flag) --> array
-    retourne la classe la plus représentée, ou "undefined". Si flag = true => si plusieurs options ont un nombre égal de représentations, permet de les afficher tous */
+  /*arrToClass(array arr, arr className, boolean flag) --> array / string
+    retourne la classe la plus representee, ou "undefined". Si flag = true => mode de prediction pour le questionnaire => si plusieurs options ont un nombre egal de representations, permet de les afficher tous */
   arrayToClass(arr, className, flag) {
     let compare = [];
     for (let p = 0; p < className.length; p++) {
@@ -36,7 +30,7 @@ class Controller {
 
     let highestNumber = Math.max.apply(null, compare); //Va chercher le plus grand nombre parmi compare (ex: [0,2,3] --> 3)
     /*numberOfOccurence(array array, int value) --> int
-           vérifie si le plus grand nombre dans array apparaît plusieurs fois (ex: [0,4,4] --> 2 (array = [0,4,4], value = 4), [0,2,5] --> 1)*/
+           verifie si le plus grand nombre dans array apparait plusieurs fois (ex: [0,4,4] --> 2 (array = [0,4,4], value = 4), [0,2,5] --> 1)*/
     function numberOfOccurence(array, value) {
       var count = 0;
       array.forEach((v) => v === value && count++);
@@ -44,11 +38,11 @@ class Controller {
     }
 
     if (1 == numberOfOccurence(compare, highestNumber) && flag != true) {
-      return className[compare.indexOf(highestNumber)];
+      return className[compare.indexOf(highestNumber)]; // -> string
     } else if (1 == numberOfOccurence(compare, highestNumber) && flag == true) {
-      return [className[compare.indexOf(highestNumber)]];
+      return [className[compare.indexOf(highestNumber)]]; // ->array
     } else if (1 != numberOfOccurence(compare, highestNumber) && flag == true) {
-      //Pour le conseil final après le questionnaire, en cas de conflit de choix ( exemple : 1OS BIC, 4OS espagnol, 4OS Grec -> retourner les OS espagnol et grec)
+      //Pour le conseil final apres le questionnaire, en cas de conflit de choix ( exemple : 1OS BIC, 4OS espagnol, 4OS Grec -> retourne les OS espagnol et grec)
       let i = 0;
       let numberOfOccurences = numberOfOccurence(compare, highestNumber);
       let classes = [];
@@ -64,7 +58,7 @@ class Controller {
   }
 
   /*getDistanceMax() --> array
-    Permet de trouver la distance maximale entre deux données données. Calculé dans le controller pour éviter de calculer plusieurs fois les distances.
+    Permet de trouver la distance maximale entre deux donnees donnees. Calcule dans le controller pour eviter de calculer plusieurs fois les distances.
     */
   getDistanceMax() {
     let dataSet = this.data.data;
@@ -91,12 +85,12 @@ class Controller {
     for (let i = 0; i < numberOfInformation; i++) {
       distanceMax.push(highestArray[i] - shortestArray[i]);
     }
-    console.log(distanceMax);
+
     return distanceMax;
   }
 
   /* getKnn(array dataArray, array point, int kMax, arr distMax) --> array
-    revoie les k donnés les plus proches d'une autre donnée sous forme d'array ( algorithme K-NN )
+    revoie les k donnees les plus proches d'une autre donnee sous forme de tableau ( algorithme K-NN )
     */
   getKnn(dataArray, point, kMax, distMax) {
     let knn = new KNN({
@@ -111,7 +105,7 @@ class Controller {
   }
 
   /*getSuccess(int fold, array success, array dataTest, array dataSet, int kMax, array distMax) --> None
-    Permets de stocker dans un objet global le nombre de bonnes prédictions par l'algorithme par valeur de k*/
+    Permets de stocker dans un objet global le nombre de bonnes predictions par l'algorithme par valeur de k*/
   getSuccess(fold, success, dataTest, dataSet, kMax, distMax) {
     for (let i = 0; i < dataTest.length; i++) {
       let nearest = this.getKnn(dataSet, dataTest[i], kMax, distMax);
@@ -131,7 +125,7 @@ class Controller {
   }
 
   /*getPercent(int numberOfFolds, int numberDataPerFold, array success, int kMax) --> None
-    Mets en pourcentage le nombre de réussites par paramètre k et le stock dans un autre objet global*/
+    Mets en pourcentage le nombre de reussites par parametre k et le stock dans un autre objet global*/
   getPercent(numberOfFolds, numberDataPerFold, success, kMax) {
     for (let j = 0; j < kMax; j++) {
       let subtotal = 0;
@@ -139,45 +133,22 @@ class Controller {
       for (let i = 0; i < numberOfFolds; i++) {
         subtotal += success[i][j];
       }
-      console.log(subtotal);
-      this.percentages.push(
+
+      this.kNNPercentages.push(
         ((subtotal / (numberOfFolds * numberDataPerFold)) * 100) / 10
-      ); // le /10--> nombre de répétition crossvalidation
+      ); // le /10--> nombre de repetition crossvalidation
     }
-    console.log(this.percentages);
   }
 
   /*reset() --> none
-    remet à zéro les résultats finaux du programme*/
+    remet à zero les resultats finaux du programme*/
   reset() {
     this.success = [];
-    this.percentages = [];
+    this.kNNPercentages = [];
   }
 
-  /*getDataTest(array dataArray, array dataTestArray) --> none
-    Permets de prendre une partie du dataSet mélangé et en faire un set d'entraînement (dataTestArray).*/
-
-  getDataTest(dataArray, dataTestArray, numberOfData, index) {
-    let arrayTest = dataArray.slice(index, numberOfData + index);
-
-    for (let i = 0; i < numberOfData; i++) {
-      dataTestArray.push(arrayTest[i]);
-    }
-
-    dataArray.splice(index, numberOfData);
-  }
-
-  /*resetDataSet(array dataSet, array dataTest, number index) --> none
-    Remets le dataSet comme il était avant d'être séparé*/
-  resetData(dataSet, dataTest, index) {
-    for (let i = dataTest.length - 1; i >= 0; i--) {
-      dataSet.splice(index, 0, dataTest[i]);
-    }
-    dataTest.splice(0);
-  }
-
-  /*crossvalidation(array dataSet, array dataTest, number numberDataPerFold) --> none
-    estimation de la fiabilité du programme*/
+  /*crossvalidation(int numberDataPerFold, int numberOfFolds, int kMax, array distMax) --> none
+    estimation de la fiabilite du programme*/
   crossvalidation(numberDataPerFold, numberOfFolds, kMax, distMax) {
     this.data.arrayShuffle();
     let index = 0;
@@ -185,10 +156,8 @@ class Controller {
     let dataTest;
     for (let i = 0; i < numberOfFolds; i++) {
       if (i == 10) {
-        //this.getDataTest(dataSet, dataTest, dataSet.length%10, index); //Si les données ne peuvent pas être divié par 10 (ex: 158 --> 158%10 = 8, un 11ème fold a déja été créer si il y a un reste et pour que toutes les données soient testées )
-        this.data.getDataTest(this.data.data.length % 10, index);
+        this.data.getDataTest(this.data.data.length % 10, index); //Si les donnees ne sont pas divisible par 10 (ex: 158 --> 158%10 = 8, un 11eme fold a deja ete creer si il y a un reste et pour que toutes les donnees soient testees )
       } else {
-        //this.getDataTest(dataSet, dataTest, numberDataPerFold, index);
         this.data.getDataTest(numberDataPerFold, index);
       }
       dataSet = this.data.dataSet;
@@ -199,7 +168,8 @@ class Controller {
       index += numberDataPerFold;
     }
   }
-
+  /* repeatedCrossValidation(int numberDataPerFold, int numberOfFolds, int kMax) --> none
+    permet de repeter la crossvalidation dix fois et d'avoir le pourcentage de reussite du programme*/
   repeatedCrossValidation(numberDataPerFold, numberOfFolds, kMax) {
     let distMax = this.getDistanceMax();
     for (let i = 0; i < 10; i++) {
@@ -209,14 +179,16 @@ class Controller {
   }
 
   /*bestKValue()
-    retourne la meilleure valuer de k à utiliser pour l'algorithme
+    retourne la meilleure valeur de k à utiliser pour l'algorithme
     */
   bestKValue() {
-    return this.percentages.indexOf(Math.max.apply(null, this.percentages)) + 1;
+    return (
+      this.kNNPercentages.indexOf(Math.max.apply(null, this.kNNPercentages)) + 1
+    );
   }
 
   /*start() --> None
-    corps principal du programme*/
+    lance le programme et la prediction du meilleur k à choisir pour un set de donnees deja charge*/
   start() {
     this.textController = new HtmlTextController();
 
@@ -224,8 +196,6 @@ class Controller {
       "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur proposée soit constamment la meilleur à choisir.";
     let dataSet = this.data.data;
     this.kMax = Math.floor(Math.sqrt(dataSet.length));
-
-    this.reset();
 
     let foldsController = new FoldsController(dataSet, this.kMax);
     let numberOfFolds = foldsController.numberOfFolds;
@@ -236,28 +206,29 @@ class Controller {
     this.classes = [...classes.classes];
 
     this.repeatedCrossValidation(numberDataPerFold, numberOfFolds, this.kMax);
-
-    new ChartController({
-      percentages: this.percentages,
+    this.mean = new Mean(dataSet, this.classes);
+    this.chartController = new ChartController({
+      percentages: this.kNNPercentages,
       kMax: this.kMax,
       textController: this.textController,
       classes: this.classes,
       dataSet: dataSet,
-      kMean: new KMean(dataSet, this.classes),
+      mean: this.mean,
     });
+
     this.textController.bestK =
       "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue());
     this.formController = new FormController(this.questions.data);
-
-    //Pour le Kmean algorithm
   }
-
+  /*stockQuestions(csv file) --> none
+  Recuperation des questions, reponses et valeur des reponses pour le formulaire*/
   stockQuestions(file) {
     this.questions = new DataController(file.split("\n"));
   }
-
+  /*form() --> none
+  donne les meilleurs choix d'apres l'algorithme kNN et la distnace par rapport aux moyennes des reponses par OS, selon les reponses de l'utilisateur au formulaire*/
   form() {
-    // let value = document.querySelector('input[name="option1"]:checked').value --> prend la valeur de l'input qui a comme nom "option1" et qui est selectionné par l'utilisateur
+    // let value = document.querySelector('input[name="option1"]:checked').value --> prend la valeur de l'input qui a comme nom "option1" et qui est selectionne  par l'utilisateur
     let answers = [];
     for (let i = 0; i < this.formController.numberOfQuestions; i++) {
       let value = document.querySelector(
@@ -265,7 +236,7 @@ class Controller {
       ).value;
       answers.push(value);
     }
-    console.log(answers);
+
     let dataSet = this.data.data;
     let nearest = this.getKnn(
       dataSet,
@@ -273,31 +244,39 @@ class Controller {
       this.bestKValue(),
       this.getDistanceMax()
     );
-    nearest.forEach((v) => {
-      console.log(v[v.length - 1]);
-    });
+
     let possibleChoices = this.arrayToClass(nearest, this.classes, true);
-    let bestChoice = "";
-    console.log(possibleChoices);
+    let bestChoiceText = "";
+
     if (possibleChoices.length > 1) {
       let text = "";
       possibleChoices.forEach((OS) => {
         text += OS + " ou ";
       });
-      bestChoice += text
+      bestChoiceText += text
         .substr(0, text.length - 5 /* -5 pour enlever le " ou " final */)
         .toLowerCase();
-      console.log(text, bestChoice);
     } else {
-      bestChoice = possibleChoices[0].toLowerCase();
+      bestChoiceText = possibleChoices[0].toLowerCase();
     }
-    this.textController.bestOption = bestChoice;
+    this.textController.bestOption = bestChoiceText;
     document.getElementById("bestOption").style.textDecoration = "underline";
     document.getElementById("bestOption").style.fontSize = "large";
-    console.log(bestChoice);
+
+    //Prediction avec la moyenne des reponses par OS
+
+    this.mean.percentageOfProximityPerOS(
+      this.mean.means,
+      answers,
+      this.getDistanceMax()
+    );
+    this.chartController.affinityPercentagePerOSChart(this.mean.percentages);
   }
 
+  /*resetForm() --> none
+  reaffiche le questionnaire et enleve le graphe d'affinité par la moyenne des reponses par OS*/
   resetForm() {
     this.textController.form = this.formController.formHTML;
+    this.chartController.destroyMeanAffinityChart();
   }
 }

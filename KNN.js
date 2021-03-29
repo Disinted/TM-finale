@@ -35,7 +35,7 @@ class KNN {
     for (let j = 0; j < this.params.k; j++) {
       //choix arbitraire d'un point le plus proche
       let nearest = set[0];
-      let var3 = null; //index du point le plus proche afin de l'enlever du set
+      let indexNearest = null; //index du point le plus proche afin de l'enlever du set
 
       for (let i = 1; i < set.length; i++) {
         let elementActuel = set[i];
@@ -45,10 +45,10 @@ class KNN {
           this.getDistance(nearest, this.params.dataPoint)
         ) {
           nearest = elementActuel;
-          var3 = i;
+          indexNearest = i;
         }
       }
-      set.splice(var3, 1);
+      set.splice(indexNearest, 1);
       this.params.nN.push(nearest);
     }
   }

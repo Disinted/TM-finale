@@ -10,13 +10,13 @@
   <!-- Script contenant ce qui permet les intéractions entre l'utilisateur et le programme + css  -->
   <script src="DataController.js"></script>
   <!--Script permettant la récupération et gestion des données-->
-  <script src="getClasses.js"></script> <!-- Récupération des différentes catégories du dataSet donné -->
-  <script src="chartController.js"></script> <!-- Script affichant le graphe à l'utilisateur -->
-  <script src="htmlTextController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
-  <script src="foldsController.js"></script>
+  <script src="GetClasses.js"></script> <!-- Récupération des différentes catégories du dataSet donné -->
+  <script src="ChartController.js"></script> <!-- Script affichant le graphe à l'utilisateur -->
+  <script src="HtmlTextController.js"></script> <!-- Script modifiant le texte affiché à l'utilisateur -->
+  <script src="FoldsController.js"></script>
   <!-- Script permettant de séparer les données en 10/11 parties ( 10/11k fold crossvalidation )-->
-  <script src="formController.js"></script>
-  <script src="KMean.js"></script>
+  <script src="FormController.js"></script>
+  <script src="Mean.js"></script>
   <!-- Script qui permet d'afficher et de récupérer les données du formulaire -->
   <link rel="stylesheet" href="style.css">
   <!-- Bootstrap CSS : les quatres modules sont nécessaires pour le bon fonctionnement complet de bootdtrap -->
@@ -42,8 +42,8 @@
 
   <script>
     let bestKFinder = new Controller();
-    fetch("questions2.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.getDataSet(text) })
-    fetch("questions.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.stockQuestions(text) }).then(() => { bestKFinder.start() })
+    fetch("dataSetOS.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.getDataSet(text) })
+    fetch("questionsOS.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.stockQuestions(text) }).then(() => { bestKFinder.start() })
 
   </script>
   <!-- mise en page avec l'utilisation de Bootstrap-->
@@ -54,23 +54,13 @@
 
         <div class="form-row">
           <div class="col">
-            <p id="baseText">Ce programme sert à déterminer quel paramètre K pour l'algorithme k-NN est le plus
-              approprié pour un certain dataset.
-              K-NN est un algorithme relativement simple qui calcule la distance entre des données, et regroupe les k
-              données les plus proche pour deviner à quelle catégorie il appartient
-              Vous aurez besoin d'un dataSet en format csv afin de voir si l'algorithme
-              est capable de trouver la bonne catégorie. Le programme utilise le système de <a
-                href=https://machinelearningmastery.com/repeated-k-fold-cross-validation-with-python>repeated-10k-fold-crossvalidation</a>
-
-            </p>
-
+            <p id="baseText" class='text-center'>Chargement en cours, veuillez patienter...</p>
           </div>
         </div>
-
-
       </div>
-      <p id="chartBoi"></p>
-      <p id="chartBoi2"></p>
+      <p id="meanChart" hidden>
+      <p id="chartText" hidden> Voici ci-dessus un graphe montrant d'après l'algorithme </p>
+      </p>
       <p id="interface-place" hidden></p>
       <p id="bestKTextPlace" hidden></p>
       <p id="form-place" hidden></p>

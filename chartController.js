@@ -5,8 +5,7 @@ class ChartController {
       this.params[k] = parameters[k];
     }
     this.chartAndTextUpdate();
-    this.scatterChart();
-    this.meanChart();
+    //this.scatterChart();
   }
 
   /*chartAndTextUpdate()--> none
@@ -86,7 +85,6 @@ class ChartController {
           dataPoints.push([i + 1, data[i]]);
         }
       });
-      console.log(dataPoints);
       OSobject.data = dataPoints;
       scatterChartInfo.push(OSobject);
     });
@@ -112,42 +110,136 @@ class ChartController {
       },
     };
 
-    //let chart = new ApexCharts(document.querySelector("#chartBoi"), options);
-    //chart.render();
+    let chart = new ApexCharts(document.querySelector("#chartBoi"), options);
+    chart.render();
   }
-
-  meanChart() {
-    let meansPerOS = this.params.kMean.means;
-    let meanChartInfos = [];
-    meansPerOS.forEach((dataArray) => {
-      let objectForChart = { name: dataArray[dataArray.length - 1] };
-
-      objectForChart.data = dataArray.slice(0, dataArray.length - 1);
-      console.log(objectForChart);
-      meanChartInfos.push(objectForChart);
+  /* affinityPercentagePerOSChart(array percentagePerOS)
+  creer un graphe qui affiche dans l'ordre croissant la proximité des réponses de l'utilisateur par rapport aux moyennes des réponses par OS par question.*/
+  affinityPercentagePerOSChart(percentagePerOS) {
+    document.getElementById("meanChart").hidden = false;
+    document.getElementById("chartText").hidden = false;
+    let percentageAffinityPerOS = [];
+    let arrayCategories = [];
+    let forChartObject = { name: "Pourcentage d'affinité par OS" };
+    percentagePerOS.forEach((object) => {
+      arrayCategories.push(object.name);
+      //Pour un meilleur affichage du graphe, les noms d'OS trop long sont raccourcis ici
+      if (
+        object.name.trim() == "Physique+ application des mathématiques".trim()
+      ) {
+        arrayCategories.pop();
+        arrayCategories.push("PAM");
+      } else if (object.name.trim() == "Biologie + chimie".trim()) {
+        arrayCategories.pop();
+        arrayCategories.push("BIC");
+      } else if (object.name.trim() == "Economie + droit ".trim()) {
+        arrayCategories.pop();
+        arrayCategories.push("Eco + Droit");
+      }
+      percentageAffinityPerOS.push(object.percentage * 100);
     });
 
-    console.log(meanChartInfos);
+    //formattage plus grand au plus petit pourcentage
+    let descendingPercentageOrder = [];
+    let descendingCategoriesOrder = [];
+    for (let i = 0; i < percentagePerOS.length; i++) {
+      let highestPercent = Math.max.apply(null, percentageAffinityPerOS);
+      let index = percentageAffinityPerOS.indexOf(highestPercent);
+      descendingPercentageOrder.push(highestPercent);
+      descendingCategoriesOrder.push(arrayCategories[index]);
+      percentageAffinityPerOS.splice(index, 1);
+      arrayCategories.splice(index, 1);
+    }
+    forChartObject.data = descendingPercentageOrder;
+
     let options = {
       //pour le graphe
-      series: meanChartInfos,
+      series: [forChartObject],
       chart: {
         height: "auto",
-        type: "scatter",
+        type: "bar",
         zoom: {
           enabled: true,
           type: "xy",
         },
       },
-
+      plotOptions: {
+        bar: {
+          borderRadius: 10,
+          dataLabels: {
+            position: "top", // top, center, bottom
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val) {
+          return val.toFixed(2) + "%";
+        },
+        offsetY: -20,
+        style: {
+          fontSize: "12px",
+          colors: ["#304758"],
+        },
+      },
       xaxis: {
-        tickAmount: 30,
+        categories: descendingCategoriesOrder,
+        position: "top",
+        labels: {
+          rotate: 0,
+        },
+        axisBorder: {
+          show: false,
+          offsetY: -20,
+        },
+        axisTicks: {
+          show: false,
+        },
+        crosshairs: {
+          fill: {
+            type: "gradient",
+            gradient: {
+              colorFrom: "#D8E3F0",
+              colorTo: "#BED1E6",
+              stops: [0, 100],
+              opacityFrom: 0.4,
+              opacityTo: 0.5,
+            },
+          },
+        },
+        tooltip: {
+          enabled: true,
+        },
       },
       yaxis: {
-        tickAmount: 6,
+        min: 0,
+        max: 100,
+        axisBorder: {
+          show: false,
+          offsetY: 100,
+        },
+        axisTicks: {
+          show: false,
+        },
+        labels: {
+          show: false,
+          formatter: function (val) {
+            return val.toFixed(2) + "%";
+          },
+        },
       },
     };
-    let chart = new ApexCharts(document.querySelector("#chartBoi"), options);
-    chart.render();
+    this.meanAffinityChart = new ApexCharts(
+      document.querySelector("#meanChart"),
+      options
+    );
+    this.meanAffinityChart.render();
+  }
+  /*destroyMeanAffinityChart() --> none
+  "detruit" (efface) le graphe et cache le texte qui va avec*/
+  destroyMeanAffinityChart() {
+    this.meanAffinityChart.destroy();
+    document.getElementById("meanChart").hidden = true;
+    document.getElementById("chartText").hidden = true;
   }
 }

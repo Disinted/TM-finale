@@ -1,5 +1,0 @@
-function createCharts(){
-    options = {
-        
-    }
-}
