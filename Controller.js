@@ -193,7 +193,7 @@ class Controller {
     this.textController = new HtmlTextController();
 
     this.textController.baseText =
-      "Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de réussite du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand. Appuyez plusieurs fois sur le bouton 'Calcul' pour être sûr que la valeur proposée soit constamment la meilleur à choisir.";
+      "Ce programme sert à conseiller un élève du Collège du Sud à choisir une option spécifique grâce aux centres d'intérêt commun entre l'élève en première année de gymnase et les élèves de quatrième année de gymnase. Le programme utilise l'algorithme k-nn ( k-NearestNeighbour ), littéralement les k plus proches voisins, qui fonctionne sur le principe de calcul de distance : il cherchera les k donnés les plus proches et la classe la plus représentée sera donc proposée par l'algorithme. Le programme a un set de donnés déjà chargé. Pour savoir la fiabilité du programme, le set est séparé en plusieurs parties : on prend une partie pour tester et le reste sert de set d'entraînement, et on fait ça en boucle jusqu'à ce que tous les donnés aient servi au moins une fois comme test. Le graphe ci-dessous contient sur l'axe des abscisses le paramètre k et sur l'axe des ordonnées le pourcentage de bonnes prédictions du programme. Plus le programme a réussi à deviner la bonne catégorie avec les k voisins les plus proches, plus le pourcentage est grand.";
     let dataSet = this.data.data;
     this.kMax = Math.floor(Math.sqrt(dataSet.length));
 
@@ -215,9 +215,11 @@ class Controller {
       dataSet: dataSet,
       mean: this.mean,
     });
-
+    this.textController.textForMeanChart =
+      "Après le questionnaire ci-dessous, vous aurez la recommandation par l'algorithme k-nn et un nouveau graphe apparaîtra. Ce graphe est une autre manière de recommander une OS, qui est de faire la moyenne des valeurs données dans le set de données et calculer les distances entre les réponses du formulaire et les moyennes des réponses par OS. Le graphe montre en pourcentage la proximité des réponses par rapport à la moyenne des réponses des OS.";
     this.textController.bestK =
-      "Le meilleur k à choisir dans ce cas est " + String(this.bestKValue());
+      "Le meilleur paramètre k à choisir dans ce cas est " +
+      String(this.bestKValue());
     this.formController = new FormController(this.questions.data);
   }
   /*stockQuestions(csv file) --> none
@@ -228,6 +230,8 @@ class Controller {
   /*form() --> none
   donne les meilleurs choix d'apres l'algorithme kNN et la distnace par rapport aux moyennes des reponses par OS, selon les reponses de l'utilisateur au formulaire*/
   form() {
+    document.getElementById("textForMeanChart").hidden = true;
+    this.textController.showBaseTextAndKChart = true;
     // let value = document.querySelector('input[name="option1"]:checked').value --> prend la valeur de l'input qui a comme nom "option1" et qui est selectionne  par l'utilisateur
     let answers = [];
     for (let i = 0; i < this.formController.numberOfQuestions; i++) {
@@ -273,10 +277,9 @@ class Controller {
     this.chartController.affinityPercentagePerOSChart(this.mean.percentages);
   }
 
-  /*resetForm() --> none
-  reaffiche le questionnaire et enleve le graphe d'affinité par la moyenne des reponses par OS*/
-  resetForm() {
-    this.textController.form = this.formController.formHTML;
-    this.chartController.destroyMeanAffinityChart();
+  /*resetProgram() --> none
+  recharge la page pour pouvoir répondre à nouveau au formulaire*/
+  resetProgram() {
+    document.location.reload();
   }
 }

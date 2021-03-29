@@ -116,8 +116,7 @@ class ChartController {
   /* affinityPercentagePerOSChart(array percentagePerOS)
   creer un graphe qui affiche dans l'ordre croissant la proximité des réponses de l'utilisateur par rapport aux moyennes des réponses par OS par question.*/
   affinityPercentagePerOSChart(percentagePerOS) {
-    document.getElementById("meanChart").hidden = false;
-    document.getElementById("chartText").hidden = false;
+    this.params.textController.showMeanChartAndText = false;
     let percentageAffinityPerOS = [];
     let arrayCategories = [];
     let forChartObject = { name: "Pourcentage d'affinité par OS" };
@@ -151,7 +150,10 @@ class ChartController {
       arrayCategories.splice(index, 1);
     }
     forChartObject.data = descendingPercentageOrder;
-
+    document.getElementById("chartText").innerHTML +=
+      " Dans ce cas, le programme vous recommande de prendre l'OS " +
+      descendingCategoriesOrder[0] +
+      ". Vous pouvez voir sur le graphe votre pourcentage d'affinité par rapport à chaque OS. Vous pouvez aussi voir ci-dessous la recommandation de l'algorithme k-nn pour votre choix d'OS.";
     let options = {
       //pour le graphe
       series: [forChartObject],
@@ -234,12 +236,5 @@ class ChartController {
       options
     );
     this.meanAffinityChart.render();
-  }
-  /*destroyMeanAffinityChart() --> none
-  "detruit" (efface) le graphe et cache le texte qui va avec*/
-  destroyMeanAffinityChart() {
-    this.meanAffinityChart.destroy();
-    document.getElementById("meanChart").hidden = true;
-    document.getElementById("chartText").hidden = true;
   }
 }

@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+<!-- Il faut lancer le programme dans un serveur local pour que ceci fonctionne. ( par exemple l'extension de Visual Studio Code "Live Server") -->
 
 <head>
   <meta charset="utf-16">
@@ -34,7 +35,7 @@
   <!-- bibliothèque plus simple d'utilisation pour des graphes en "barre"-->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <!-- bibliothèque plus simple d'utilisation pour des graphes type "nuage de points"-->
-  <title>Meilleur k pour l'algorithme k-NN</title>
+  <title>Recommandation OS</title>
 
 </head>
 
@@ -50,7 +51,7 @@
   <div class="col-md-6 offset-md-3">
     <div class="card">
       <div class="card-body">
-        <h1>Meilleur k pour l'algorithme k-NN</h1>
+        <h1>Recommandation d'option spécifique pour un élève en première année de gymnase par des algorithmes</h1>
 
         <div class="form-row">
           <div class="col">
@@ -58,12 +59,17 @@
           </div>
         </div>
       </div>
-      <p id="meanChart" hidden>
-      <p id="chartText" hidden> Voici ci-dessus un graphe montrant d'après l'algorithme </p>
-      </p>
       <p id="interface-place" hidden></p>
       <p id="bestKTextPlace" hidden></p>
+      <p id="meanChart" hidden>
+      <div class="card-body" id="chartCanvas" hidden>
+        <p id="chartText" hidden> Voici ci-dessus un graphe montrant d'après la distance calculée par rapport aux
+          moyennes des réponses par OS, votre affinité par option dans l'ordre décroissant.</p>
+        </p>
+      </div>
+      <p id="textForMeanChart" hidden></p>
       <p id="form-place" hidden></p>
+
 
 
     </div>
