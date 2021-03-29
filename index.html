@@ -42,9 +42,9 @@
 <body class="bg-info py-5">
 
   <script>
-    let bestKFinder = new Controller();
-    fetch("dataSetOS.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.getDataSet(text) })
-    fetch("questionsOS.csv").then((file) => { return file.text() }).then((text) => { bestKFinder.stockQuestions(text) }).then(() => { bestKFinder.start() })
+    let OSRecommender = new Controller();
+    fetch("dataSetOS.csv").then((file) => { return file.text() }).then((text) => { OSRecommender.getDataSet(text) })
+    fetch("questionsOS.csv").then((file) => { return file.text() }).then((text) => { OSRecommender.stockQuestions(text) }).then(() => { OSRecommender.start() })
 
   </script>
   <!-- mise en page avec l'utilisation de Bootstrap-->
@@ -64,7 +64,7 @@
       <p id="meanChart" hidden>
       <div class="card-body" id="chartCanvas" hidden>
         <p id="chartText" hidden> Voici ci-dessus un graphe montrant d'après la distance calculée par rapport aux
-          moyennes des réponses par OS, votre affinité par option dans l'ordre décroissant.</p>
+          moyennes des réponses par OS et vos réponses, votre affinité par option dans l'ordre décroissant.</p>
         </p>
       </div>
       <p id="textForMeanChart" hidden></p>

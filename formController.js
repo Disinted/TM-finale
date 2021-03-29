@@ -11,6 +11,8 @@ class FormController {
   get formHTML() {
     return this.htmlTextToAdd;
   }
+  /*formCreation() --> none
+  creation d'un formulaire a partir d'un array -> creation de texte html, qui sera transmis au fichier "index" */
   formCreation() {
     let textController = new HtmlTextController();
     this.htmlTextToAdd = '<div class="card-body">';
@@ -60,7 +62,7 @@ class FormController {
       }
     }
     this.htmlTextToAdd +=
-      '<button type="input"  class="btn btn-warning" onclick="bestKFinder.form()" >Soummettre les réponses</button></div>';
+      '<button type="input"  class="btn btn-warning" onclick="OSRecommender.form()" >Soummettre les réponses</button></div>';
 
     textController.form = this.htmlTextToAdd;
 
@@ -73,7 +75,7 @@ class FormController {
   }
 }
 
-/* code html pour le formulaire ( de manière lisible ) d'exemple
+/* exemple code html pour le formulaire ( de manière lisible )
 <div class="card-body">
     <p id = "formQuestions" >
         votre âge ?
@@ -106,6 +108,6 @@ class FormController {
         </label>
     </div>
     <div etc...
-    <button type="input"  class="btn btn-warning" onclick="bestKFinder.form()" >Submit</button>
+    <button type="input"  class="btn btn-warning" onclick="OSRecommender.form()" >Soummettre les réponses</button>
 </div>
 */

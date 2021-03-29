@@ -37,7 +37,7 @@ class HtmlTextController {
     document.getElementById("form-place").innerHTML =
       "<p class='text-center'  id='bestOption'> L'algorithme k-NN vous recommende de choisir l'option " +
       option +
-      "</p> <div class='text-center'><button type='input'  class='btn btn-warning' onclick='bestKFinder.resetProgram()' >Refaire le questionnaire</button></div>";
+      "</p> <div class='text-center'><button type='input'  class='btn btn-warning' onclick='OSRecommender.resetProgram()' >Refaire le questionnaire</button></div>";
   }
 
   set showMeanChartAndText(boolean) {
