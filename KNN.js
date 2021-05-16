@@ -24,7 +24,7 @@ class KNN {
   }
 
   /*getNN() --> none
-    stock dans un variable globale les k points les plus proches d'un poit donne dans un array ([[point plus proche1], [deuxieme point le plus proche],...])*/
+    stock dans un variable globale les k points les plus proches d'un point donne dans un array ([[point plus proche1], [deuxieme point le plus proche],...])*/
   getNN() {
     let set = [];
     for (let x = 0; x < this.params.dataArray_KNN.length; x++) {
