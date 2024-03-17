@@ -11,6 +11,7 @@ Then during 6 months we've
 
 We came to the conclusion that k mean clustering seemed very good for such applications but we lacked a several amount of data to make use of it
 
+To try the project by yourself, you can run index.html on a (local) server. 
 this is the research document:  Document_theorique_TM.pdf
 
 Many thanks to my partner Vibbeshan for this experience that taught us much more than machine learning, as many of you would know, It is no easy feat to work together on an ambitious task.
